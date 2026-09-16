@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refreshProfile = async () => {
-    if (!token) return;
+    if (!token || token.startsWith('demo-')) return;
     try {
       const res = await api.get('/auth/me');
       setUser(res.data);

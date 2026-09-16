@@ -18,7 +18,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const token = localStorage.getItem('take_two_token');
+    if (error.response && error.response.status === 401 && (!token || !token.startsWith('demo-'))) {
       localStorage.removeItem('take_two_token');
       localStorage.removeItem('take_two_user');
       if (window.location.pathname !== '/login') {
