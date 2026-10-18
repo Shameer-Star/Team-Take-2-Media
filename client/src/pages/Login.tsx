@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { CocoLogo } from '../components/CocoLogo';
-import { Shield, ArrowRight, Lock, Mail, Users, CheckCircle } from 'lucide-react';
+import { ArrowRight, Lock, Mail, CheckCircle } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ export const Login: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Please enter both email and password');
+      setError('Please enter both work email and password.');
       return;
     }
 
@@ -27,68 +27,32 @@ export const Login: React.FC = () => {
       setError('');
       setForgotMsg(false);
 
-      let token = '';
-      let userObj: any = null;
+      const res = await api.post('/auth/login', {
+        email: email.trim(),
+        password,
+      });
 
-      try {
-        const res = await api.post('/auth/login', {
-          email: email.trim(),
-          password,
-        });
-        token = res.data.token;
-        userObj = res.data.user;
-      } catch (apiErr: any) {
-        // Automatic fail-safe for Vercel deployment
-        const cleanEmail = email.trim().toLowerCase();
-        const isAdminUser =
-          cleanEmail.includes('admin') ||
-          cleanEmail.includes('naveed') ||
-          cleanEmail.includes('shameer') ||
-          cleanEmail.includes('rayyan') ||
-          cleanEmail === 'admin@cocomedia.com';
-
-        let displayName = 'Team Member';
-        if (cleanEmail.includes('naveed')) displayName = 'Naveed (Admin)';
-        else if (cleanEmail.includes('shameer')) displayName = 'Shameer (Admin)';
-        else if (cleanEmail.includes('rayyan')) displayName = 'Rayyan (Admin)';
-        else if (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed')) displayName = 'Alhameed';
-        else if (cleanEmail.includes('sathar')) displayName = 'Sathar (UI/UX)';
-        else if (cleanEmail.includes('asfar')) displayName = 'Asfar (Video)';
-        else if (cleanEmail.includes('hilal')) displayName = 'Hilal (Marketing)';
-        else if (cleanEmail.includes('sivabalan')) displayName = 'Sivabalan (Content)';
-
-        token = isAdminUser ? 'demo-admin-token' : 'demo-member-token';
-        userObj = {
-          id: isAdminUser ? 'u-naveed' : (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed') ? 'u-alhameed' : 'u-sathar'),
-          name: displayName,
-          email: cleanEmail,
-          role: isAdminUser ? 'admin' : 'team_member',
-          designation: isAdminUser ? 'Director / Admin' : (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed') ? 'Senior Video Editor & Media Specialist' : 'Lead Specialist'),
-          avatar_url: isAdminUser
-            ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
-            : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-        };
+      if (!res.data || !res.data.token || !res.data.user) {
+        throw new Error('Authentication response incomplete.');
       }
 
-      login(token, userObj);
+      login(res.data.token, res.data.user);
 
-      if (userObj.role === 'admin') {
+      if (res.data.user.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/member');
       }
     } catch (err: any) {
-      setError('Login failed. Please verify credentials.');
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Invalid work email or password. Access is restricted to authorized personnel.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickFill = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setError('');
-    setForgotMsg(false);
   };
 
   return (
@@ -158,7 +122,7 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setForgotMsg(true)}
-                  className="text-[11px] text-zinc-400 hover:text-white font-medium transition"
+                  className="text-[11px] text-zinc-400 hover:text-white font-medium transition cursor-pointer"
                 >
                   Forgot password?
                 </button>
@@ -187,102 +151,6 @@ export const Login: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          {/* Quick Demo Switcher Section */}
-          <div className="mt-6 pt-5 border-t border-zinc-800/80">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-[#E50914]" />
-                Demo Credentials (1-Click)
-              </span>
-              <span className="text-[9px] text-zinc-500 font-medium">Click to populate</span>
-            </div>
-
-            <div className="space-y-3">
-              {/* Admin Roles */}
-              <div>
-                <div className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                  <Shield className="w-3 h-3 text-[#E50914]" />
-                  Administrators
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('naveed@cocomedia.com', 'Naveed123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Naveed</div>
-                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('shameer@cocomedia.com', 'Shameer123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Shameer</div>
-                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('rayyan@cocomedia.com', 'Rayyan123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Rayyan</div>
-                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Team Members */}
-              <div>
-                <div className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1.5">
-                  Team Members
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('alhameed@cocomedia.com', 'Hameed123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Alhameed</div>
-                    <div className="text-[9px] text-zinc-400">Video Spec</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('sathar@cocomedia.com', 'Sathar123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Sathar</div>
-                    <div className="text-[9px] text-zinc-400">UI/UX Lead</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('asfar@cocomedia.com', 'Asfar123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Asfar</div>
-                    <div className="text-[9px] text-zinc-400">Video Producer</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('hilal@cocomedia.com', 'Hilal123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Hilal</div>
-                    <div className="text-[9px] text-zinc-400">Marketing</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('sivabalan@cocomedia.com', 'Sivabalan123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white">Sivabalan</div>
-                    <div className="text-[9px] text-zinc-400">Content Spec</div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="text-center mt-6 text-xs text-zinc-500 font-medium">

@@ -37,9 +37,14 @@ export const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.get('/analytics/admin');
-      setData(res.data);
+      if (res?.data && typeof res.data === 'object') {
+        setData(res.data);
+      } else {
+        setData(null);
+      }
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -56,11 +61,12 @@ export const AdminDashboard: React.FC = () => {
     );
   }
 
-  const kpis = data?.kpis || {};
-  const members = data?.member_productivity || [];
-  const recent = data?.recent_activity || [];
-  const leadSources = data?.lead_sources || [];
-  const weekly = data?.weekly_productivity || [];
+  const safeData = data && typeof data === 'object' ? data : {};
+  const kpis = safeData?.kpis || {};
+  const members = Array.isArray(safeData?.member_productivity) ? safeData.member_productivity : [];
+  const recent = Array.isArray(safeData?.recent_activity) ? safeData.recent_activity : [];
+  const leadSources = Array.isArray(safeData?.lead_sources) ? safeData.lead_sources : [];
+  const weekly = Array.isArray(safeData?.weekly_productivity) ? safeData.weekly_productivity : [];
 
   return (
     <div className="space-y-6 pb-12">

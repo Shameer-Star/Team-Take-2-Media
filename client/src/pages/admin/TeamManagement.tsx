@@ -49,9 +49,10 @@ export const TeamManagement: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.get('/users');
-      setMembers(res.data);
+      setMembers(Array.isArray(res?.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load team:', err);
+      setMembers([]);
     } finally {
       setLoading(false);
     }

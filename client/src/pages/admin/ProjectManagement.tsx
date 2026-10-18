@@ -34,9 +34,10 @@ export const ProjectManagement: React.FC = () => {
       const params: any = {};
       if (statusFilter) params.status = statusFilter;
       const res = await api.get('/projects', { params });
-      setProjects(res.data);
+      setProjects(Array.isArray(res?.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load projects:', err);
+      setProjects([]);
     } finally {
       setLoading(false);
     }

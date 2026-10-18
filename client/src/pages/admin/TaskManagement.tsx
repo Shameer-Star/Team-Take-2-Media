@@ -40,7 +40,7 @@ export const TaskManagement: React.FC = () => {
 
   useEffect(() => {
     loadTasks();
-    api.get('/users').then((res) => setMembers(res.data)).catch(console.error);
+    api.get('/users').then((res) => setMembers(Array.isArray(res?.data) ? res.data : [])).catch(console.error);
   }, [statusFilter, priorityFilter, memberFilter]);
 
   const loadTasks = async () => {
@@ -52,9 +52,10 @@ export const TaskManagement: React.FC = () => {
       if (memberFilter) params.assigned_to_id = memberFilter;
 
       const res = await api.get('/tasks', { params });
-      setTasks(res.data);
+      setTasks(Array.isArray(res?.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load tasks:', err);
+      setTasks([]);
     } finally {
       setLoading(false);
     }

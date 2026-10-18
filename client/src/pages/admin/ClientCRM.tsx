@@ -43,9 +43,10 @@ export const ClientCRM: React.FC = () => {
       if (statusFilter) params.status = statusFilter;
       if (search) params.search = search;
       const res = await api.get('/clients', { params });
-      setClients(res.data);
+      setClients(Array.isArray(res?.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load clients:', err);
+      setClients([]);
     } finally {
       setLoading(false);
     }

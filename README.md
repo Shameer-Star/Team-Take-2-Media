@@ -12,7 +12,7 @@
 ---
 
 ## 🔑 Initial User Credentials
-Initial demo accounts are pre-configured with 1-click login presets on the login screen:
+Registered company accounts for sign-in:
 
 ### Administrators (Full Executive Operations & Review Access):
 1. **Naveed** (`naveed@cocomedia.com`) — Password: `Naveed123.` (Managing Director / Admin)

@@ -33,24 +33,29 @@ export const MemberDashboard: React.FC = () => {
         api.get('/tasks'),
         api.get('/reports'),
       ]);
-      setTasks(tRes.data);
-      setReports(rRes.data);
+      setTasks(Array.isArray(tRes?.data) ? tRes.data : []);
+      setReports(Array.isArray(rRes?.data) ? rRes.data : []);
     } catch (err) {
       console.error('Failed to load member cockpit:', err);
+      setTasks([]);
+      setReports([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const pendingTasks = tasks.filter((t) => t.status !== 'APPROVED' && t.status !== 'COMPLETED');
-  const inProgressTasks = tasks.filter((t) => t.status === 'IN_PROGRESS');
-  const submittedTasks = tasks.filter((t) => t.status === 'SUBMITTED');
-  const rejectedTasks = tasks.filter((t) => t.status === 'REJECTED');
-  const completedTasks = tasks.filter((t) => t.status === 'APPROVED' || t.status === 'COMPLETED');
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const safeReports = Array.isArray(reports) ? reports : [];
+
+  const pendingTasks = safeTasks.filter((t) => t.status !== 'APPROVED' && t.status !== 'COMPLETED');
+  const inProgressTasks = safeTasks.filter((t) => t.status === 'IN_PROGRESS');
+  const submittedTasks = safeTasks.filter((t) => t.status === 'SUBMITTED');
+  const rejectedTasks = safeTasks.filter((t) => t.status === 'REJECTED');
+  const completedTasks = safeTasks.filter((t) => t.status === 'APPROVED' || t.status === 'COMPLETED');
 
   const today = new Date().toISOString().split('T')[0];
-  const todaysReport = reports.find((r) => r.report_date === today);
-  const totalHoursThisWeek = reports.reduce((sum, r) => sum + (r.hours_worked || 0), 0) || 32.5;
+  const todaysReport = safeReports.find((r) => r.report_date === today);
+  const totalHoursThisWeek = safeReports.reduce((sum, r) => sum + (r.hours_worked || 0), 0) || 32.5;
 
   return (
     <div className="space-y-6 pb-12 font-sans">

@@ -47,10 +47,12 @@ export const LeadPipeline: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.get('/leads');
-      setLeads(res.data.leads || []);
-      setMetrics(res.data.metrics || {});
+      setLeads(Array.isArray(res?.data) ? res.data : (Array.isArray(res?.data?.leads) ? res.data.leads : []));
+      setMetrics(res?.data?.metrics || {});
     } catch (err) {
       console.error('Failed to load leads:', err);
+      setLeads([]);
+      setMetrics({});
     } finally {
       setLoading(false);
     }

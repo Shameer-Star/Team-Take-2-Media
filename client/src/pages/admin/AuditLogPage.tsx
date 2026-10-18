@@ -21,9 +21,10 @@ export const AuditLogPage: React.FC = () => {
       if (entityFilter) params.entity_type = entityFilter;
 
       const res = await api.get('/audit-logs', { params });
-      setLogs(res.data.logs || []);
+      setLogs(Array.isArray(res?.data) ? res.data : (Array.isArray(res?.data?.logs) ? res.data.logs : []));
     } catch (err) {
       console.error('Failed to load audit logs:', err);
+      setLogs([]);
     } finally {
       setLoading(false);
     }

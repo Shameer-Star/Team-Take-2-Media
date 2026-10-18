@@ -40,9 +40,10 @@ export const AnalyticsDashboard: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.get('/analytics/admin');
-      setData(res.data);
+      setData(res?.data && typeof res.data === 'object' ? res.data : null);
     } catch (err) {
       console.error('Failed to load analytics:', err);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -51,12 +52,12 @@ export const AnalyticsDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="p-12 flex justify-center items-center">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#E50914] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  const kpis = data?.kpis || {};
+  const kpis = (data && typeof data === 'object') ? data.kpis || {} : {};
   const members = data?.member_productivity || [];
   const leadSources = data?.lead_sources || [];
   const weekly = data?.weekly_productivity || [];

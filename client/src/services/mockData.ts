@@ -211,6 +211,18 @@ export const SEED_USERS: MockUser[] = [
   },
 ];
 
+// Master Authentication Credentials for strict verification
+export const VALID_CREDENTIALS: Record<string, { pass: string; user: MockUser }> = {
+  'naveed@cocomedia.com': { pass: 'Naveed123.', user: SEED_USERS[1] },
+  'shameer@cocomedia.com': { pass: 'Shameer123.', user: SEED_USERS[2] },
+  'rayyan@cocomedia.com': { pass: 'Rayyan123.', user: SEED_USERS[3] },
+  'alhameed@cocomedia.com': { pass: 'Hameed123.', user: SEED_USERS[0] },
+  'sathar@cocomedia.com': { pass: 'Sathar123.', user: SEED_USERS[4] },
+  'asfar@cocomedia.com': { pass: 'Asfar123.', user: SEED_USERS[5] },
+  'hilal@cocomedia.com': { pass: 'Hilal123.', user: SEED_USERS[6] },
+  'sivabalan@cocomedia.com': { pass: 'Sivabalan123.', user: SEED_USERS[7] },
+};
+
 export const SEED_CLIENTS: MockClient[] = [
   { id: 'c-1', company_name: 'Apex Fitness Club', contact_person: 'Marcus Vance', email: 'marcus@apexfitness.com', phone: '+1 555-401-9210', location: 'Dubai / Downtown', industry: 'Fitness & Health', service: 'Full Digital Transformation & Branding', budget: 24000, assigned_member_id: 'u-hilal', assigned_name: 'Hilal', status: 'Active', source: 'Instagram' },
   { id: 'c-2', company_name: 'Luminar Tech Solutions', contact_person: 'Elena Rostova', email: 'elena@luminartech.io', phone: '+1 555-602-8321', location: 'London / Shoreditch', industry: 'SaaS / Enterprise AI', service: 'Web App & Marketing Assets', budget: 38000, assigned_member_id: 'u-alhameed', assigned_name: 'Alhameed', status: 'Active', source: 'LinkedIn' },

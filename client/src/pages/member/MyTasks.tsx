@@ -14,7 +14,10 @@ import {
   Sparkles,
 } from 'lucide-react';
 
+import { useAuth } from '../../context/AuthContext';
+
 export const MyTasks: React.FC = () => {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,15 +33,23 @@ export const MyTasks: React.FC = () => {
 
   useEffect(() => {
     loadTasks();
-  }, []);
+  }, [user?.id]);
 
   const loadTasks = async () => {
     try {
       setLoading(true);
       const res = await api.get('/tasks');
-      setTasks(res.data);
+      const allTasks: Task[] = Array.isArray(res?.data) ? res.data : [];
+      // Strict scoping: only tasks assigned to this logged-in team member
+      const myAssignedTasks = allTasks.filter(
+        (t) =>
+          t.assigned_to_id === user?.id ||
+          t.assigned_to_name?.toLowerCase() === user?.name?.toLowerCase()
+      );
+      setTasks(myAssignedTasks);
     } catch (err) {
       console.error('Failed to load tasks:', err);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -118,7 +129,7 @@ export const MyTasks: React.FC = () => {
 
       {/* Task List */}
       <div className="space-y-4">
-        {tasks.length === 0 ? (
+        {(!Array.isArray(tasks) || tasks.length === 0) ? (
           <div className="p-12 text-center bg-[#111827] border border-slate-800 rounded-2xl">
             <CheckSquare className="w-10 h-10 text-slate-600 mx-auto mb-2" />
             <div className="text-xs font-semibold text-slate-400">You currently have no assigned tasks.</div>

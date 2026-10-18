@@ -47,11 +47,14 @@ export const DailyReportSubmit: React.FC = () => {
         api.get('/tasks'),
         api.get('/clients'),
       ]);
-      setReports(rRes.data);
-      setTasks(tRes.data);
-      setClients(cRes.data);
+      setReports(Array.isArray(rRes?.data) ? rRes.data : []);
+      setTasks(Array.isArray(tRes?.data) ? tRes.data : []);
+      setClients(Array.isArray(cRes?.data) ? cRes.data : []);
     } catch (err) {
       console.error('Failed to load reports data:', err);
+      setReports([]);
+      setTasks([]);
+      setClients([]);
     } finally {
       setLoading(false);
     }

@@ -17,26 +17,59 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('take_two_token'));
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('take_two_user');
-    return saved ? JSON.parse(saved) : null;
+  const [token, setToken] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('coco_token') || localStorage.getItem('take_two_token') || null;
+    } catch {
+      return null;
+    }
   });
+
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const saved = localStorage.getItem('coco_user') || localStorage.getItem('take_two_user');
+      if (!saved || saved === 'undefined' || saved === 'null') return null;
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed === 'object' && parsed.email) {
+        return parsed;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  });
+
   const [celebrationShown, setCelebrationShown] = useState<boolean>(() => {
-    return sessionStorage.getItem('take_two_celebrated') === 'true';
+    try {
+      return sessionStorage.getItem('take_two_celebrated') === 'true';
+    } catch {
+      return false;
+    }
   });
 
   const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('take_two_token', newToken);
-    localStorage.setItem('take_two_user', JSON.stringify(newUser));
+    try {
+      localStorage.setItem('coco_token', newToken);
+      localStorage.setItem('take_two_token', newToken);
+      localStorage.setItem('coco_user', JSON.stringify(newUser));
+      localStorage.setItem('take_two_user', JSON.stringify(newUser));
+    } catch (e) {
+      console.warn('Storage save error:', e);
+    }
     setToken(newToken);
     setUser(newUser);
   };
 
   const logout = () => {
-    localStorage.removeItem('take_two_token');
-    localStorage.removeItem('take_two_user');
-    sessionStorage.removeItem('take_two_celebrated');
+    try {
+      localStorage.removeItem('coco_token');
+      localStorage.removeItem('take_two_token');
+      localStorage.removeItem('coco_user');
+      localStorage.removeItem('take_two_user');
+      sessionStorage.removeItem('take_two_celebrated');
+    } catch (e) {
+      console.warn('Storage clear error:', e);
+    }
     setToken(null);
     setUser(null);
   };

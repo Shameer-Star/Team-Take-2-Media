@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { mockStore, SEED_USERS } from './mockData';
+import { mockStore, SEED_USERS, VALID_CREDENTIALS } from './mockData';
 
 const api = axios.create({
   baseURL: '/api',
@@ -17,37 +17,54 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
+// Helper to get active authenticated user
+function getCurrentUser(): any {
+  try {
+    const raw = localStorage.getItem('coco_user') || localStorage.getItem('take_two_user');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 // Mock Handler for fail-safe Vercel deployment and standalone demo
 function handleMockRoute(url: string, method: string, data?: any): any {
   const cleanUrl = url.replace(/^\/api/, '');
+  const currentUser = getCurrentUser();
 
-  // Auth: Login
+  // Auth: Login - STRICT CREDENTIAL VERIFICATION
   if (cleanUrl.startsWith('/auth/login') && method === 'post') {
     const email = (data?.email || '').trim().toLowerCase();
-    const isAdmin =
-      email.includes('admin') ||
-      email.includes('naveed') ||
-      email.includes('shameer') ||
-      email.includes('rayyan');
+    const password = data?.password || '';
 
-    const isAlhameed = email.includes('alhameed') || email.includes('hameed');
+    const entry = VALID_CREDENTIALS[email];
+    if (!entry || entry.pass !== password) {
+      return {
+        __isError: true,
+        status: 401,
+        message: 'Invalid work email or password. Access is restricted to registered company accounts.',
+      };
+    }
 
-    const matchedUser = mockStore.users.find(u => u.email.toLowerCase() === email) || {
-      id: isAdmin ? 'u-naveed' : (isAlhameed ? 'u-alhameed' : 'u-sathar'),
-      name: isAdmin ? 'Naveed' : (isAlhameed ? 'Alhameed' : 'Team Member'),
-      email: email || 'user@cocomedia.com',
-      role: isAdmin ? 'admin' : 'team_member',
-      designation: isAdmin ? 'Director / Admin' : (isAlhameed ? 'Senior Video Editor & Media Specialist' : 'Lead Specialist'),
-      phone: '+1 (555) 019-2834',
-      is_active: 1,
+    const matchedUser = {
+      ...entry.user,
+      role: entry.user.role === 'admin' ? 'admin' : 'team_member',
     };
 
     return {
       token: `coco-token-${matchedUser.id}`,
-      user: {
-        ...matchedUser,
-        role: isAdmin ? 'admin' : matchedUser.role,
-      },
+      user: matchedUser,
+    };
+  }
+
+  // Auth: Me
+  if (cleanUrl.startsWith('/auth/me')) {
+    if (currentUser) return currentUser;
+    return {
+      __isError: true,
+      status: 401,
+      message: 'Unauthenticated session',
     };
   }
 
@@ -58,7 +75,16 @@ function handleMockRoute(url: string, method: string, data?: any): any {
 
   // Tasks
   if (cleanUrl === '/tasks' || cleanUrl.startsWith('/tasks?')) {
-    if (method === 'get') return [...mockStore.tasks];
+    if (method === 'get') {
+      // Team members only see their assigned tasks
+      if (currentUser && currentUser.role !== 'admin') {
+        return mockStore.tasks.filter(
+          t => t.assigned_to_id === currentUser.id || 
+               t.assigned_to_name?.toLowerCase() === currentUser.name?.toLowerCase()
+        );
+      }
+      return [...mockStore.tasks];
+    }
     if (method === 'post') {
       const newTask = {
         id: `t-${Date.now()}`,
@@ -84,7 +110,16 @@ function handleMockRoute(url: string, method: string, data?: any): any {
 
   // Reports
   if (cleanUrl === '/reports' || cleanUrl.startsWith('/reports?')) {
-    if (method === 'get') return [...mockStore.reports];
+    if (method === 'get') {
+      // Team members only see their own work reports
+      if (currentUser && currentUser.role !== 'admin') {
+        return mockStore.reports.filter(
+          r => r.user_id === currentUser.id || 
+               r.user_name?.toLowerCase() === currentUser.name?.toLowerCase()
+        );
+      }
+      return [...mockStore.reports];
+    }
     if (method === 'post') {
       const newReport = {
         id: `r-${Date.now()}`,
@@ -193,7 +228,29 @@ function handleMockRoute(url: string, method: string, data?: any): any {
 }
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Detect if Vercel SPA rewrite returned HTML string instead of JSON
+    if (
+      typeof response.data === 'string' &&
+      (response.data.includes('<!doctype html') || response.data.includes('<html'))
+    ) {
+      const url = response.config.url || '';
+      const method = (response.config.method || 'get').toLowerCase();
+      let requestData = response.config.data;
+      try {
+        if (typeof requestData === 'string') requestData = JSON.parse(requestData);
+      } catch (e) {}
+
+      const mockResult = handleMockRoute(url, method, requestData);
+      if (mockResult && mockResult.__isError) {
+        const error: any = new Error(mockResult.message || 'Unauthorized');
+        error.response = { status: mockResult.status || 401, data: { error: mockResult.message } };
+        return Promise.reject(error);
+      }
+      response.data = mockResult;
+    }
+    return response;
+  },
   (error) => {
     const { config } = error;
     if (config) {
@@ -208,10 +265,13 @@ api.interceptors.response.use(
         requestData = config.data;
       }
 
-      console.warn(`[COCO MEDIA OS] API request to ${url} handled by fail-proof persistence layer.`);
       const mockResult = handleMockRoute(url, method, requestData);
+      if (mockResult && mockResult.__isError) {
+        error.response = { status: mockResult.status || 401, data: { error: mockResult.message } };
+        return Promise.reject(error);
+      }
 
-      // Return synthetic success response
+      // Return synthetic success response with mock data
       const syntheticResponse: AxiosResponse = {
         data: mockResult,
         status: 200,

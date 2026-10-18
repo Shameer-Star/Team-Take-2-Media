@@ -35,9 +35,10 @@ export const ReportsReview: React.FC = () => {
       const params: any = {};
       if (statusFilter) params.status = statusFilter;
       const res = await api.get('/reports', { params });
-      setReports(res.data);
+      setReports(Array.isArray(res?.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load reports:', err);
+      setReports([]);
     } finally {
       setLoading(false);
     }
