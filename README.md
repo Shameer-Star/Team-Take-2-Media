@@ -15,12 +15,12 @@
 Initial demo accounts are pre-configured with 1-click login presets on the login screen:
 
 ### Administrators (Full Executive Operations & Review Access):
-1. **Alhameed** (`alhameed@cocomedia.com`) — Password: `Hameed123.` (Co-Founder & Technical Director / Admin)
-2. **Naveed** (`naveed@cocomedia.com`) — Password: `Naveed123.` (Managing Director / Admin)
-3. **Shameer** (`shameer@cocomedia.com`) — Password: `Shameer123.` (Operations Director / Admin)
-4. **Rayyan** (`rayyan@cocomedia.com`) — Password: `Rayyan123.` (Creative Director / Admin)
+1. **Naveed** (`naveed@cocomedia.com`) — Password: `Naveed123.` (Managing Director / Admin)
+2. **Shameer** (`shameer@cocomedia.com`) — Password: `Shameer123.` (Operations Director / Admin)
+3. **Rayyan** (`rayyan@cocomedia.com`) — Password: `Rayyan123.` (Creative Director / Admin)
 
 ### Team Members (Work Execution & Daily Logs):
+4. **Alhameed** (`alhameed@cocomedia.com`) — Password: `Hameed123.` (Senior Video Editor & Media Specialist)
 5. **Sathar** (`sathar@cocomedia.com`) — Password: `Sathar123.` (Lead UI/UX Designer)
 6. **Asfar** (`asfar@cocomedia.com`) — Password: `Asfar123.` (Video & Motion Producer)
 7. **Hilal** (`hilal@cocomedia.com`) — Password: `Hilal123.` (Digital Marketing Strategist)
@@ -88,7 +88,7 @@ The platform is pre-configured for automated, zero-configuration deployment to *
 
 2. **Self-Healing Persistence**:
    - Includes a fail-proof localStorage persistence layer (`mockData.ts` & `api.ts`).
-   - When deployed to Vercel without a persistent backend server, all endpoints (login, tasks, reports, leads, clients, team members including Alhameed as Admin) continue to function with full interactivity and local persistence!
+   - When deployed to Vercel without a persistent backend server, all endpoints (login, tasks, reports, leads, clients, team members) continue to function with full interactivity and local persistence!
 
 3. **Deploy with 1 Click**:
    - Push repository to GitHub/GitLab.

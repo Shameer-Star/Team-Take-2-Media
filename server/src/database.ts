@@ -35,18 +35,18 @@ export async function initDatabase(): Promise<Database> {
   // Check if seed data is needed
   await seedInitialData();
 
-  // Ensure Alhameed is always an administrator and emails reflect COCO MEDIA
+  // Ensure Alhameed is set to member role and emails reflect COCO MEDIA
   try {
-    const adminRole = queryOne("SELECT id FROM roles WHERE name = 'admin'");
-    if (adminRole) {
+    const memberRole = queryOne("SELECT id FROM roles WHERE name = 'team_member' OR name = 'member'");
+    if (memberRole) {
       runQuery(
         `UPDATE users 
          SET role_id = ?, 
              name = 'Alhameed', 
              email = 'alhameed@cocomedia.com',
-             designation = 'Co-Founder & Technical Director / Admin' 
+             designation = 'Senior Video Editor & Media Specialist' 
          WHERE email LIKE '%hameed%' OR name LIKE '%Hameed%'`,
-        [adminRole.id]
+        [memberRole.id]
       );
       runQuery("UPDATE users SET email = REPLACE(email, '@taketwomedia.com', '@cocomedia.com')");
     }
@@ -395,9 +395,9 @@ async function seedInitialData() {
     JSON.stringify(['view_assigned_tasks', 'submit_report', 'view_leaderboard', 'view_points'])
   ]);
 
-  // 2. Initial Users (Alhameed is an Administrator alongside Naveed, Shameer, and Rayyan)
+  // 2. Initial Users (Naveed, Shameer, and Rayyan are Administrators; Alhameed is a Team Member)
   const userSeeds = [
-    { name: 'Alhameed', email: 'alhameed@cocomedia.com', pass: 'Hameed123.', roleId: adminRoleId, designation: 'Co-Founder & Technical Director / Admin', phone: '+1 (555) 019-2834' },
+    { name: 'Alhameed', email: 'alhameed@cocomedia.com', pass: 'Hameed123.', roleId: memberRoleId, designation: 'Senior Video Editor & Media Specialist', phone: '+1 (555) 019-2834' },
     { name: 'Naveed', email: 'naveed@cocomedia.com', pass: 'Naveed123.', roleId: adminRoleId, designation: 'Managing Director / Admin', phone: '+1 (555) 019-2831' },
     { name: 'Shameer', email: 'shameer@cocomedia.com', pass: 'Shameer123.', roleId: adminRoleId, designation: 'Operations Director / Admin', phone: '+1 (555) 019-2832' },
     { name: 'Rayyan', email: 'rayyan@cocomedia.com', pass: 'Rayyan123.', roleId: adminRoleId, designation: 'Creative Director / Admin', phone: '+1 (555) 019-2833' },

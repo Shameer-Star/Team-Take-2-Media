@@ -42,18 +42,16 @@ export const Login: React.FC = () => {
         const cleanEmail = email.trim().toLowerCase();
         const isAdminUser =
           cleanEmail.includes('admin') ||
-          cleanEmail.includes('alhameed') ||
-          cleanEmail.includes('hameed') ||
           cleanEmail.includes('naveed') ||
           cleanEmail.includes('shameer') ||
           cleanEmail.includes('rayyan') ||
           cleanEmail === 'admin@cocomedia.com';
 
         let displayName = 'Team Member';
-        if (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed')) displayName = 'Alhameed (Admin)';
-        else if (cleanEmail.includes('naveed')) displayName = 'Naveed (Admin)';
+        if (cleanEmail.includes('naveed')) displayName = 'Naveed (Admin)';
         else if (cleanEmail.includes('shameer')) displayName = 'Shameer (Admin)';
         else if (cleanEmail.includes('rayyan')) displayName = 'Rayyan (Admin)';
+        else if (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed')) displayName = 'Alhameed';
         else if (cleanEmail.includes('sathar')) displayName = 'Sathar (UI/UX)';
         else if (cleanEmail.includes('asfar')) displayName = 'Asfar (Video)';
         else if (cleanEmail.includes('hilal')) displayName = 'Hilal (Marketing)';
@@ -61,11 +59,11 @@ export const Login: React.FC = () => {
 
         token = isAdminUser ? 'demo-admin-token' : 'demo-member-token';
         userObj = {
-          id: isAdminUser ? 'u-alhameed' : 'u-sathar',
+          id: isAdminUser ? 'u-naveed' : (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed') ? 'u-alhameed' : 'u-sathar'),
           name: displayName,
           email: cleanEmail,
           role: isAdminUser ? 'admin' : 'team_member',
-          designation: isAdminUser ? 'Co-Founder & Technical Director / Admin' : 'Lead Specialist',
+          designation: isAdminUser ? 'Director / Admin' : (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed') ? 'Senior Video Editor & Media Specialist' : 'Lead Specialist'),
           avatar_url: isAdminUser
             ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
             : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
@@ -129,7 +127,7 @@ export const Login: React.FC = () => {
             {forgotMsg && (
               <div className="p-3 bg-zinc-800/80 border border-zinc-700 text-zinc-300 text-xs rounded-xl flex items-start space-x-2">
                 <CheckCircle className="w-4 h-4 text-[#E50914] shrink-0 mt-0.5" />
-                <span>To reset your password, contact an administrator (Alhameed, Naveed, Shameer, or Rayyan).</span>
+                <span>To reset your password, contact an administrator (Naveed, Shameer, or Rayyan).</span>
               </div>
             )}
 
@@ -201,28 +199,17 @@ export const Login: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              {/* Admin Roles including Alhameed */}
+              {/* Admin Roles */}
               <div>
                 <div className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1.5 flex items-center gap-1">
                   <Shield className="w-3 h-3 text-[#E50914]" />
                   Administrators
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('alhameed@cocomedia.com', 'Hameed123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
-                  >
-                    <div className="font-bold text-[11px] group-hover:text-white flex items-center gap-1">
-                      Alhameed
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
-                    </div>
-                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
-                  </button>
+                <div className="grid grid-cols-3 gap-1.5">
                   <button
                     type="button"
                     onClick={() => handleQuickFill('naveed@cocomedia.com', 'Naveed123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
                   >
                     <div className="font-bold text-[11px] group-hover:text-white">Naveed</div>
                     <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
@@ -230,7 +217,7 @@ export const Login: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('shameer@cocomedia.com', 'Shameer123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
                   >
                     <div className="font-bold text-[11px] group-hover:text-white">Shameer</div>
                     <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
@@ -238,7 +225,7 @@ export const Login: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleQuickFill('rayyan@cocomedia.com', 'Rayyan123.')}
-                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
                   >
                     <div className="font-bold text-[11px] group-hover:text-white">Rayyan</div>
                     <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
@@ -251,7 +238,15 @@ export const Login: React.FC = () => {
                 <div className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1.5">
                   Team Members
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('alhameed@cocomedia.com', 'Hameed123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Alhameed</div>
+                    <div className="text-[9px] text-zinc-400">Video Spec</div>
+                  </button>
                   <button
                     type="button"
                     onClick={() => handleQuickFill('sathar@cocomedia.com', 'Sathar123.')}

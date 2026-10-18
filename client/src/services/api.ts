@@ -26,18 +26,18 @@ function handleMockRoute(url: string, method: string, data?: any): any {
     const email = (data?.email || '').trim().toLowerCase();
     const isAdmin =
       email.includes('admin') ||
-      email.includes('alhameed') ||
-      email.includes('hameed') ||
       email.includes('naveed') ||
       email.includes('shameer') ||
       email.includes('rayyan');
 
+    const isAlhameed = email.includes('alhameed') || email.includes('hameed');
+
     const matchedUser = mockStore.users.find(u => u.email.toLowerCase() === email) || {
-      id: isAdmin ? 'u-alhameed' : 'u-sathar',
-      name: isAdmin ? (email.includes('alhameed') || email.includes('hameed') ? 'Alhameed' : 'Naveed') : 'Team Member',
+      id: isAdmin ? 'u-naveed' : (isAlhameed ? 'u-alhameed' : 'u-sathar'),
+      name: isAdmin ? 'Naveed' : (isAlhameed ? 'Alhameed' : 'Team Member'),
       email: email || 'user@cocomedia.com',
       role: isAdmin ? 'admin' : 'team_member',
-      designation: isAdmin ? 'Co-Founder & Director / Admin' : 'Lead Specialist',
+      designation: isAdmin ? 'Director / Admin' : (isAlhameed ? 'Senior Video Editor & Media Specialist' : 'Lead Specialist'),
       phone: '+1 (555) 019-2834',
       is_active: 1,
     };

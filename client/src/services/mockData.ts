@@ -127,14 +127,14 @@ export interface MockAuditLog {
 
 const STORAGE_KEY = 'coco_media_store_v1';
 
-// Seed Users: Alhameed is an Administrator alongside Naveed, Shameer, and Rayyan
+// Seed Users: Naveed, Shameer, and Rayyan are Administrators; Alhameed is a Team Member
 export const SEED_USERS: MockUser[] = [
   {
     id: 'u-alhameed',
     name: 'Alhameed',
     email: 'alhameed@cocomedia.com',
-    role: 'admin',
-    designation: 'Co-Founder & Technical Director / Admin',
+    role: 'team_member',
+    designation: 'Senior Video Editor & Media Specialist',
     phone: '+1 (555) 019-2834',
     avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
     is_active: 1,
@@ -274,7 +274,7 @@ export const SEED_NOTIFICATIONS: MockNotification[] = [
 ];
 
 export const SEED_AUDIT_LOGS: MockAuditLog[] = [
-  { id: 'a-1', user_name: 'Alhameed', action: 'LOGIN', entity_type: 'AUTH', description: 'Admin Alhameed logged into COCO MEDIA OS', created_at: new Date().toISOString() },
+  { id: 'a-1', user_name: 'Alhameed', action: 'LOGIN', entity_type: 'AUTH', description: 'Alhameed logged into COCO MEDIA OS', created_at: new Date().toISOString() },
   { id: 'a-2', user_name: 'Naveed', action: 'CREATE', entity_type: 'TASK', description: 'Created task "Implement Apex Member Booking API" assigned to Alhameed', created_at: new Date(Date.now() - 3600000).toISOString() },
   { id: 'a-3', user_name: 'Shameer', action: 'APPROVE', entity_type: 'REPORT', description: 'Approved daily work report for Asfar on Apex Fitness Club', created_at: new Date(Date.now() - 7200000).toISOString() },
   { id: 'a-4', user_name: 'Rayyan', action: 'UPDATE', entity_type: 'LEAD', description: 'Moved lead "Horizon Fintech" to MEETING stage ($45,000)', created_at: new Date(Date.now() - 14400000).toISOString() },
@@ -309,13 +309,13 @@ class MockStore {
         this.notifications = parsed.notifications || SEED_NOTIFICATIONS;
         this.auditLogs = parsed.auditLogs || SEED_AUDIT_LOGS;
 
-        // Ensure Alhameed is an admin even in previously cached localStorage
+        // Ensure Alhameed is set to team_member even in previously cached localStorage
         const alhameed = this.users.find(u => u.email.includes('hameed') || u.name.includes('Hameed'));
         if (alhameed) {
           alhameed.name = 'Alhameed';
           alhameed.email = 'alhameed@cocomedia.com';
-          alhameed.role = 'admin';
-          alhameed.designation = 'Co-Founder & Technical Director / Admin';
+          alhameed.role = 'team_member';
+          alhameed.designation = 'Senior Video Editor & Media Specialist';
         } else {
           this.users.unshift(SEED_USERS[0]);
         }
