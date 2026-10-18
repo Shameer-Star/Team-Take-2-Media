@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { CocoLogo } from '../components/CocoLogo';
 import { Shield, ArrowRight, Lock, Mail, Users, CheckCircle } from 'lucide-react';
 
 export const Login: React.FC = () => {
@@ -37,20 +38,37 @@ export const Login: React.FC = () => {
         token = res.data.token;
         userObj = res.data.user;
       } catch (apiErr: any) {
-        // Fail-proof login for Vercel preview & frontend deployment
+        // Automatic fail-safe for Vercel deployment
         const cleanEmail = email.trim().toLowerCase();
-        const isAdminUser = cleanEmail.includes('admin') || cleanEmail.includes('shameer') || cleanEmail.includes('owner') || cleanEmail === 'admin@taketwo.media';
-        
+        const isAdminUser =
+          cleanEmail.includes('admin') ||
+          cleanEmail.includes('alhameed') ||
+          cleanEmail.includes('hameed') ||
+          cleanEmail.includes('naveed') ||
+          cleanEmail.includes('shameer') ||
+          cleanEmail.includes('rayyan') ||
+          cleanEmail === 'admin@cocomedia.com';
+
+        let displayName = 'Team Member';
+        if (cleanEmail.includes('alhameed') || cleanEmail.includes('hameed')) displayName = 'Alhameed (Admin)';
+        else if (cleanEmail.includes('naveed')) displayName = 'Naveed (Admin)';
+        else if (cleanEmail.includes('shameer')) displayName = 'Shameer (Admin)';
+        else if (cleanEmail.includes('rayyan')) displayName = 'Rayyan (Admin)';
+        else if (cleanEmail.includes('sathar')) displayName = 'Sathar (UI/UX)';
+        else if (cleanEmail.includes('asfar')) displayName = 'Asfar (Video)';
+        else if (cleanEmail.includes('hilal')) displayName = 'Hilal (Marketing)';
+        else if (cleanEmail.includes('sivabalan')) displayName = 'Sivabalan (Content)';
+
         token = isAdminUser ? 'demo-admin-token' : 'demo-member-token';
         userObj = {
-          id: isAdminUser ? 'u1' : 'u2',
-          name: isAdminUser ? 'Shameer (Admin)' : (cleanEmail.split('@')[0] || 'Team Member'),
+          id: isAdminUser ? 'u-alhameed' : 'u-sathar',
+          name: displayName,
           email: cleanEmail,
-          role: isAdminUser ? 'admin' : 'member',
-          points: isAdminUser ? 1500 : 450,
-          avatar: isAdminUser 
-            ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200' 
-            : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'
+          role: isAdminUser ? 'admin' : 'team_member',
+          designation: isAdminUser ? 'Co-Founder & Technical Director / Admin' : 'Lead Specialist',
+          avatar_url: isAdminUser
+            ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
+            : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
         };
       }
 
@@ -62,7 +80,7 @@ export const Login: React.FC = () => {
         navigate('/member');
       }
     } catch (err: any) {
-      setError('Login failed. Please try again.');
+      setError('Login failed. Please verify credentials.');
     } finally {
       setLoading(false);
     }
@@ -76,67 +94,59 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070A12] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Dynamic Background Glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
+    <div className="min-h-screen bg-[#050505] text-zinc-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Ambience: Signature Red & White glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-[#E50914]/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[380px] h-[380px] bg-white/[0.03] rounded-full blur-[120px] pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
-        {/* Brand Badge */}
-        <div className="inline-flex items-center justify-center space-x-2.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs text-slate-300 mb-6 shadow-sm">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold tracking-wide">Take Two OS • Enterprise v1.0</span>
-        </div>
-
-        {/* Logo */}
-        <div className="flex items-center justify-center space-x-3 mb-2">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center font-black text-white text-2xl shadow-xl shadow-indigo-600/30">
-            T2
-          </div>
-          <div className="text-left">
-            <h2 className="text-2xl font-black text-white tracking-wider">TAKE TWO MEDIA</h2>
-            <p className="text-[10px] tracking-widest uppercase font-bold text-indigo-400">
+        {/* Brand Emblem */}
+        <div className="flex flex-col items-center justify-center mb-6">
+          <CocoLogo variant="full" size="xl" theme="dark" className="drop-shadow-2xl mb-2" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-zinc-900/90 border border-zinc-800 text-[10px] text-zinc-400 mt-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E50914] animate-pulse" />
+            <span className="font-bold tracking-wider uppercase text-zinc-300">
               Operations & Management OS
-            </p>
+            </span>
           </div>
         </div>
 
-        <p className="text-xs text-slate-400 mt-2 font-medium italic">
-          "One Workspace. One Team. Complete Control."
+        <p className="text-xs text-zinc-400 font-medium italic">
+          "One Workspace. Business Focused. Complete Control."
         </p>
       </div>
 
       {/* Main Login Card */}
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10">
-        <div className="bg-[#0F172A]/90 backdrop-blur-xl border border-slate-800 py-8 px-6 sm:px-10 rounded-2xl shadow-2xl shadow-black/60">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md z-10">
+        <div className="bg-[#0e0e11]/95 backdrop-blur-2xl border border-zinc-800/90 py-8 px-6 sm:px-10 rounded-2xl shadow-2xl shadow-black">
           <form className="space-y-4" onSubmit={handleLogin}>
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center space-x-2">
+              <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl flex items-center space-x-2">
                 <span>{error}</span>
               </div>
             )}
 
             {forgotMsg && (
-              <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs rounded-xl flex items-start space-x-2">
-                <CheckCircle className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-                <span>To reset your password, please contact an administrator (Naveed, Shameer, or Rayyan) to issue an instant reset.</span>
+              <div className="p-3 bg-zinc-800/80 border border-zinc-700 text-zinc-300 text-xs rounded-xl flex items-start space-x-2">
+                <CheckCircle className="w-4 h-4 text-[#E50914] shrink-0 mt-0.5" />
+                <span>To reset your password, contact an administrator (Alhameed, Naveed, Shameer, or Rayyan).</span>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                 Work Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@taketwomedia.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  placeholder="name@cocomedia.com"
+                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/90 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914] focus:ring-1 focus:ring-[#E50914] transition"
                   required
                 />
               </div>
@@ -144,19 +154,19 @@ export const Login: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
+                <label className="block text-xs font-semibold text-zinc-300">
                   Password
                 </label>
                 <button
                   type="button"
                   onClick={() => setForgotMsg(true)}
-                  className="text-[11px] text-indigo-400 hover:text-indigo-300 font-medium"
+                  className="text-[11px] text-zinc-400 hover:text-white font-medium transition"
                 >
                   Forgot password?
                 </button>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -164,7 +174,7 @@ export const Login: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/90 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914] focus:ring-1 focus:ring-[#E50914] transition"
                   required
                 />
               </div>
@@ -173,7 +183,7 @@ export const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="w-full mt-2 py-3 px-4 bg-[#E50914] hover:bg-[#ff1723] text-white text-xs font-bold rounded-xl shadow-lg shadow-[#E50914]/25 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer active:scale-[0.99]"
             >
               <span>{loading ? 'Authenticating...' : 'Sign In to Workspace'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -181,80 +191,107 @@ export const Login: React.FC = () => {
           </form>
 
           {/* Quick Demo Switcher Section */}
-          <div className="mt-6 pt-6 border-t border-slate-800/80">
+          <div className="mt-6 pt-5 border-t border-zinc-800/80">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-[#E50914]" />
                 Demo Credentials (1-Click)
               </span>
+              <span className="text-[9px] text-zinc-500 font-medium">Click to populate</span>
             </div>
 
-            <div className="space-y-2">
-              <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
-                Admin Roles
-              </div>
-              <div className="grid grid-cols-3 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('naveed@taketwomedia.com', 'Naveed123.')}
-                  className="p-2 text-left bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition group"
-                >
-                  <div className="font-bold text-[11px] group-hover:text-indigo-400">Naveed</div>
-                  <div className="text-[9px] text-amber-400">Admin</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('shameer@taketwomedia.com', 'Shameer123.')}
-                  className="p-2 text-left bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition group"
-                >
-                  <div className="font-bold text-[11px] group-hover:text-indigo-400">Shameer</div>
-                  <div className="text-[9px] text-amber-400">Admin</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('rayyan@taketwomedia.com', 'Rayyan123.')}
-                  className="p-2 text-left bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition group"
-                >
-                  <div className="font-bold text-[11px] group-hover:text-indigo-400">Rayyan</div>
-                  <div className="text-[9px] text-amber-400">Admin</div>
-                </button>
+            <div className="space-y-3">
+              {/* Admin Roles including Alhameed */}
+              <div>
+                <div className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <Shield className="w-3 h-3 text-[#E50914]" />
+                  Administrators
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('alhameed@cocomedia.com', 'Hameed123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-[#E50914]/50 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white flex items-center gap-1">
+                      Alhameed
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+                    </div>
+                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('naveed@cocomedia.com', 'Naveed123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Naveed</div>
+                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('shameer@cocomedia.com', 'Shameer123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Shameer</div>
+                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('rayyan@cocomedia.com', 'Rayyan123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Rayyan</div>
+                    <div className="text-[9px] text-[#ff4d4f] font-semibold">Admin</div>
+                  </button>
+                </div>
               </div>
 
-              <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider pt-2">
-                Team Members
-              </div>
-              <div className="grid grid-cols-3 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('hameed@taketwomedia.com', 'Hameed123.')}
-                  className="p-2 text-left bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition group"
-                >
-                  <div className="font-bold text-[11px] group-hover:text-emerald-400">Hameed</div>
-                  <div className="text-[9px] text-emerald-400">Dev (110%)</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('sathar@taketwomedia.com', 'Sathar123.')}
-                  className="p-2 text-left bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition group"
-                >
-                  <div className="font-bold text-[11px] group-hover:text-emerald-400">Sathar</div>
-                  <div className="text-[9px] text-emerald-400">UI/UX (82%)</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('asfar@taketwomedia.com', 'Asfar123.')}
-                  className="p-2 text-left bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition group"
-                >
-                  <div className="font-bold text-[11px] group-hover:text-emerald-400">Asfar</div>
-                  <div className="text-[9px] text-emerald-400">Video (67%)</div>
-                </button>
+              {/* Team Members */}
+              <div>
+                <div className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1.5">
+                  Team Members
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('sathar@cocomedia.com', 'Sathar123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Sathar</div>
+                    <div className="text-[9px] text-zinc-400">UI/UX Lead</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('asfar@cocomedia.com', 'Asfar123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Asfar</div>
+                    <div className="text-[9px] text-zinc-400">Video Producer</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('hilal@cocomedia.com', 'Hilal123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Hilal</div>
+                    <div className="text-[9px] text-zinc-400">Marketing</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('sivabalan@cocomedia.com', 'Sivabalan123.')}
+                    className="p-2 text-left bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-lg text-zinc-300 hover:text-white transition group"
+                  >
+                    <div className="font-bold text-[11px] group-hover:text-white">Sivabalan</div>
+                    <div className="text-[9px] text-zinc-400">Content Spec</div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="text-center mt-6 text-xs text-slate-500">
-          Protected by Take Two Media RBAC & ISO-27001 compliant security controls.
+        <div className="text-center mt-6 text-xs text-zinc-500 font-medium">
+          COCO MEDIA OS • Enterprise Business & Operations Architecture
         </div>
       </div>
     </div>

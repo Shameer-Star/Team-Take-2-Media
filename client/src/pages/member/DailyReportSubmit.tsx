@@ -89,7 +89,7 @@ export const DailyReportSubmit: React.FC = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      setFeedback('Daily report submitted successfully! Status: Pending Approval. (+2 Points upon review).');
+      setFeedback('Daily work report submitted successfully! Status: Pending Management Review.');
       setWorkDescription('');
       setCompletedItems('');
       setImplementedItems('');
@@ -106,14 +106,14 @@ export const DailyReportSubmit: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 font-sans">
       <div>
-        <h2 className="text-sm font-black uppercase tracking-wider text-slate-300 flex items-center gap-2">
-          <FileText className="w-4 h-4 text-cyan-400" />
+        <h2 className="text-sm font-black uppercase tracking-wider text-zinc-200 flex items-center gap-2">
+          <FileText className="w-4 h-4 text-[#E50914]" />
           Daily Work Report & Output Verification
         </h2>
-        <p className="text-xs text-slate-400">
-          Document your daily operational execution. Every approved report awards +2 performance points.
+        <p className="text-xs text-zinc-400">
+          Document your daily operational execution and technical implementations for management review.
         </p>
       </div>
 
@@ -277,7 +277,7 @@ export const DailyReportSubmit: React.FC = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2 disabled:opacity-50"
+              className="px-6 py-2.5 bg-[#E50914] hover:bg-[#ff1723] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#E50914]/25 transition flex items-center space-x-2 disabled:opacity-50 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{submitting ? 'Submitting...' : 'Submit Daily Work Report'}</span>

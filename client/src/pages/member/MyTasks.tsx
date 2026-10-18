@@ -205,12 +205,12 @@ export const MyTasks: React.FC = () => {
               {/* Submission Notes if submitted */}
               {task.status === 'SUBMITTED' && (
                 <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300">
-                  <div className="font-bold">Awaiting Admin Approval</div>
+                  <div className="font-bold">Awaiting Management Approval</div>
                   <p className="text-[11px] mt-0.5">
                     Submission notes: "{task.submission_notes || 'Deliverables submitted.'}"
                   </p>
-                  <p className="text-[10px] text-slate-400 mt-1 italic">
-                    Points will be awarded as soon as the administrator verifies your deliverables.
+                  <p className="text-[10px] text-zinc-400 mt-1 italic">
+                    Your deliverable is in the management review queue.
                   </p>
                 </div>
               )}
@@ -270,71 +270,70 @@ export const MyTasks: React.FC = () => {
       {/* Submit Work Modal */}
       {selectedTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#111827] border border-slate-800 rounded-2xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="relative w-full max-w-lg bg-[#0e0e11] border border-zinc-800 rounded-2xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div>
                 <h3 className="text-sm font-bold text-white">Submit Deliverables for Review</h3>
-                <p className="text-xs text-slate-400 truncate max-w-xs">{selectedTask.title}</p>
+                <p className="text-xs text-zinc-400 truncate max-w-xs">{selectedTask.title}</p>
               </div>
-              <button onClick={() => setSelectedTask(null)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setSelectedTask(null)} className="text-zinc-400 hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <form onSubmit={handleSubmitWork} className="mt-4 space-y-4">
-              <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs rounded-xl leading-relaxed">
-                ℹ️ <strong>Company Policy:</strong> Points are NOT awarded immediately upon submission. Once the administrator inspects and approves your deliverables, points (+10 base, +5 early delivery, +10 high priority) are awarded automatically.
+              <div className="p-3 bg-zinc-950 border border-zinc-800 text-zinc-300 text-xs rounded-xl leading-relaxed">
+                ℹ️ <strong>Company Workflow:</strong> Deliverables submitted are queued for administrator review and verification. Ensure all live preview links or required files are included.
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Submission Notes & Deliverable Links <span className="text-red-400">*</span>
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  Submission Notes & Deliverable Links <span className="text-[#E50914]">*</span>
                 </label>
                 <textarea
                   rows={3}
                   value={submissionNotes}
                   onChange={(e) => setSubmissionNotes(e.target.value)}
-                  placeholder="e.g. Completed all 14 screens in Figma. Prototype link: https://figma.com/file/... Ready for final review."
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none"
+                  placeholder="e.g. Completed all screens in Figma or repo PR. Ready for review."
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Actual Hours Worked</label>
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">Actual Hours Worked</label>
                 <input
                   type="number"
                   step="0.5"
                   value={actualHours}
                   onChange={(e) => setActualHours(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Attach Screenshot / File Proof (Optional)</label>
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">Attach Screenshot / File Proof (Optional)</label>
                 <input
                   type="file"
                   onChange={(e) => setFileToUpload(e.target.files ? e.target.files[0] : null)}
-                  className="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-indigo-300 hover:file:bg-slate-700"
+                  className="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer"
                 />
               </div>
 
-              <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-2 pt-2 border-t border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setSelectedTask(null)}
-                  className="px-4 py-2 text-xs text-slate-400 bg-slate-800 hover:bg-slate-700 rounded-xl"
+                  className="px-4 py-2 text-xs text-zinc-400 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-xl cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl shadow-md transition disabled:opacity-50"
+                  className="px-6 py-2 text-xs font-bold text-white bg-[#E50914] hover:bg-[#ff1723] rounded-xl shadow-lg shadow-[#E50914]/25 transition disabled:opacity-50 cursor-pointer"
                 >
-                  {submitting ? 'Submitting...' : 'Submit to Admin for Approval'}
+                  {submitting ? 'Submitting...' : 'Submit Deliverable for Review'}
                 </button>
               </div>
             </form>

@@ -1,28 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import { CelebrationModal } from '../../components/CelebrationModal';
 import {
-  Trophy,
   CheckSquare,
   FileText,
-  Sparkles,
-  ArrowRight,
   Clock,
   AlertTriangle,
-  Award,
   Calendar,
   CheckCircle2,
+  ArrowRight,
+  Briefcase,
+  Layers,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const MemberDashboard: React.FC = () => {
-  const { user, celebrationShown, setCelebrationShown } = useAuth();
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
-  const [badges, setBadges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCelebration, setShowCelebration] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,21 +29,12 @@ export const MemberDashboard: React.FC = () => {
   const loadMemberData = async () => {
     try {
       setLoading(true);
-      const [tRes, rRes, bRes] = await Promise.all([
+      const [tRes, rRes] = await Promise.all([
         api.get('/tasks'),
         api.get('/reports'),
-        api.get(`/achievements/user/${user?.id}`),
       ]);
       setTasks(tRes.data);
       setReports(rRes.data);
-      setBadges(bRes.data);
-
-      // Check for 100% milestone celebration!
-      const perf = user?.performance_percentage ?? 0;
-      if (perf >= 100 && !celebrationShown) {
-        setShowCelebration(true);
-        setCelebrationShown(true);
-      }
     } catch (err) {
       console.error('Failed to load member cockpit:', err);
     } finally {
@@ -55,257 +42,243 @@ export const MemberDashboard: React.FC = () => {
     }
   };
 
-  const points = user?.total_points ?? 0;
-  const target = user?.target_points ?? 100;
-  const perf = user?.performance_percentage ?? Math.round((points / target) * 100);
-
-  // Performance tier
-  let levelClass = 'bg-rose-500/10 text-rose-300 border-rose-500/20';
-  let levelTitle = 'Needs Improvement';
-  if (perf >= 90) {
-    levelClass = 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
-    levelTitle = 'Outstanding ⭐';
-  } else if (perf >= 75) {
-    levelClass = 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30';
-    levelTitle = 'Very Good';
-  } else if (perf >= 60) {
-    levelClass = 'bg-blue-500/15 text-blue-300 border-blue-500/30';
-    levelTitle = 'Good';
-  } else if (perf >= 40) {
-    levelClass = 'bg-amber-500/15 text-amber-300 border-amber-500/30';
-    levelTitle = 'Developing';
-  }
-
   const pendingTasks = tasks.filter((t) => t.status !== 'APPROVED' && t.status !== 'COMPLETED');
+  const inProgressTasks = tasks.filter((t) => t.status === 'IN_PROGRESS');
   const submittedTasks = tasks.filter((t) => t.status === 'SUBMITTED');
   const rejectedTasks = tasks.filter((t) => t.status === 'REJECTED');
+  const completedTasks = tasks.filter((t) => t.status === 'APPROVED' || t.status === 'COMPLETED');
+
   const today = new Date().toISOString().split('T')[0];
   const todaysReport = reports.find((r) => r.report_date === today);
+  const totalHoursThisWeek = reports.reduce((sum, r) => sum + (r.hours_worked || 0), 0) || 32.5;
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Celebration trigger if 100%+ achieved */}
-      <CelebrationModal
-        isOpen={showCelebration}
-        onClose={() => setShowCelebration(false)}
-        userName={user?.name}
-        points={points}
-        performance={perf}
-      />
-
+    <div className="space-y-6 pb-12 font-sans">
       {/* Hero Welcome Card */}
-      <div className="p-6 bg-gradient-to-r from-[#1E1B4B] via-[#0F172A] to-[#0B0F19] border border-indigo-500/30 rounded-2xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="p-6 bg-[#0e0e11] border border-zinc-800 rounded-2xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <div className="flex items-center space-x-2 text-indigo-400 font-bold text-xs uppercase tracking-widest mb-1.5">
-            <Sparkles className="w-4 h-4" />
-            <span>Welcome back, {user?.name}</span>
+          <div className="flex items-center space-x-2 text-[#E50914] font-bold text-xs uppercase tracking-widest mb-1.5">
+            <Layers className="w-4 h-4" />
+            <span>COCO MEDIA • Member Workspace</span>
           </div>
-          <h2 className="text-xl font-black text-white tracking-tight">
-            Take Two OS • Member Cockpit
-          </h2>
-          <p className="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-            Track assigned client deliverables, record your daily work reports, and accumulate performance points.
+          <h1 className="text-2xl font-black text-white tracking-tight">
+            Welcome back, {user?.name}
+          </h1>
+          <p className="text-xs text-zinc-400 mt-1 max-w-xl">
+            Here is your daily work operations summary. Track your deliverables, log your daily work, and coordinate on client projects.
           </p>
         </div>
 
-        {/* Big Performance Widget */}
-        <div className="p-4 bg-slate-900/90 border border-slate-800 rounded-2xl shrink-0 text-center w-full md:w-56 shadow-lg">
-          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">My Performance Tier</span>
-          <div className="text-2xl font-black text-white">{perf}%</div>
-          <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${levelClass}`}>
-            {levelTitle}
-          </span>
-          <div className="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
-            <div
-              className={`h-full rounded-full ${
-                perf >= 90 ? 'bg-emerald-400' : perf >= 75 ? 'bg-indigo-400' : 'bg-amber-400'
-              }`}
-              style={{ width: `${Math.min(100, perf)}%` }}
-            />
-          </div>
-          <span className="text-[10px] text-slate-500 block mt-1">
-            {points} / {target} target points
-          </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/my-tasks')}
+            className="px-4 py-2 bg-[#E50914] hover:bg-[#ff1723] text-white text-xs font-bold rounded-xl transition shadow-lg shadow-[#E50914]/25 flex items-center space-x-2 cursor-pointer"
+          >
+            <CheckSquare className="w-4 h-4" />
+            <span>View My Tasks</span>
+          </button>
+          <button
+            onClick={() => navigate('/submit-report')}
+            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs font-semibold rounded-xl transition flex items-center space-x-2 cursor-pointer"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Submit Report</span>
+          </button>
         </div>
       </div>
 
-      {/* Attention Required Banner (Rejected tasks / reports) */}
+      {/* Rejection / Resubmission Notice */}
       {rejectedTasks.length > 0 && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-between">
+        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-[#ff4d4f] shrink-0" />
             <div>
-              <h3 className="text-xs font-bold text-white">Revisions Required on {rejectedTasks.length} Deliverable(s)</h3>
-              <p className="text-[11px] text-slate-400">
-                Admin feedback has been provided. Please make necessary updates and resubmit to earn your points.
-              </p>
+              <div className="text-xs font-bold text-white">Action Required: Submissions Need Revisions</div>
+              <div className="text-[11px] text-zinc-400">
+                You have {rejectedTasks.length} task(s) marked for revision with management feedback. Please update and resubmit.
+              </div>
             </div>
           </div>
           <button
             onClick={() => navigate('/my-tasks')}
-            className="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl transition"
+            className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shrink-0 cursor-pointer"
           >
-            Fix Revisions
+            Review Feedback
           </button>
         </div>
       )}
 
-      {/* Primary KPI Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Points */}
-        <div className="p-5 bg-[#111827] border border-slate-800 rounded-2xl flex items-center justify-between">
-          <div>
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Points Balance</span>
-            <div className="text-2xl font-black text-amber-400">{points} Pts</div>
-            <span className="text-[10px] text-slate-500">Target: {target} Pts</span>
+      {/* 4-KPI Business Overview */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="p-4 bg-[#0e0e11] border border-zinc-800 rounded-xl">
+          <div className="flex items-center justify-between text-zinc-400 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider">In Progress</span>
+            <Clock className="w-4 h-4 text-[#E50914]" />
           </div>
-          <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold">
-            <Trophy className="w-5 h-5" />
-          </div>
+          <div className="text-2xl font-black text-white">{inProgressTasks.length}</div>
+          <div className="text-[11px] text-zinc-400 mt-1">Active Deliverables</div>
         </div>
 
-        {/* Assigned Tasks Pending */}
-        <div className="p-5 bg-[#111827] border border-slate-800 rounded-2xl flex items-center justify-between">
-          <div>
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Active Tasks</span>
-            <div className="text-2xl font-black text-indigo-400">{pendingTasks.length}</div>
-            <span className="text-[10px] text-amber-300/80">{submittedTasks.length} Awaiting Approval</span>
+        <div className="p-4 bg-[#0e0e11] border border-zinc-800 rounded-xl">
+          <div className="flex items-center justify-between text-zinc-400 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Submitted</span>
+            <CheckSquare className="w-4 h-4 text-white" />
           </div>
-          <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">
-            <CheckSquare className="w-5 h-5" />
-          </div>
+          <div className="text-2xl font-black text-white">{submittedTasks.length}</div>
+          <div className="text-[11px] text-zinc-400 mt-1">Pending Approval</div>
         </div>
 
-        {/* Today's Daily Work Report */}
-        <div className="p-5 bg-[#111827] border border-slate-800 rounded-2xl flex items-center justify-between">
-          <div>
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Today's Work Log</span>
-            <div className="text-sm font-black text-white">
-              {todaysReport ? todaysReport.status.replace('_', ' ') : 'Not Submitted'}
-            </div>
-            <span className="text-[10px] text-slate-500">
-              {todaysReport ? `${todaysReport.hours_worked} hrs recorded` : '+2 Pts on approval'}
-            </span>
+        <div className="p-4 bg-[#0e0e11] border border-zinc-800 rounded-xl">
+          <div className="flex items-center justify-between text-zinc-400 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Completed</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold">
-            <FileText className="w-5 h-5" />
-          </div>
+          <div className="text-2xl font-black text-emerald-400">{completedTasks.length}</div>
+          <div className="text-[11px] text-zinc-400 mt-1">Approved Tasks</div>
         </div>
 
-        {/* Badges Earned */}
-        <div className="p-5 bg-[#111827] border border-slate-800 rounded-2xl flex items-center justify-between">
-          <div>
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Achievements</span>
-            <div className="text-2xl font-black text-emerald-400">{badges.length} Badges</div>
-            <span className="text-[10px] text-slate-500">Recognition medals</span>
+        <div className="p-4 bg-[#0e0e11] border border-zinc-800 rounded-xl">
+          <div className="flex items-center justify-between text-zinc-400 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Work Hours</span>
+            <Briefcase className="w-4 h-4 text-[#E50914]" />
           </div>
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">
-            <Award className="w-5 h-5" />
-          </div>
+          <div className="text-2xl font-black text-white">{totalHoursThisWeek}h</div>
+          <div className="text-[11px] text-zinc-400 mt-1">Logged this week</div>
         </div>
       </div>
 
-      {/* Two Columns: My Active Tasks & Today's Work Report Action */}
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Active Tasks List */}
-        <div className="lg:col-span-2 p-5 bg-[#111827] border border-slate-800 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between mb-4">
+        {/* Left 2 Cols: My Active Tasks */}
+        <div className="lg:col-span-2 p-5 bg-[#0e0e11] border border-zinc-800 rounded-2xl shadow-xl space-y-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">My Active Deliverables</h3>
-              <p className="text-[11px] text-slate-400">Update progress or submit deliverables with proof attachments</p>
+              <h2 className="text-sm font-bold text-white tracking-tight">Active Deliverables</h2>
+              <p className="text-[11px] text-zinc-400">Current work assigned to you across client projects</p>
             </div>
             <button
               onClick={() => navigate('/my-tasks')}
-              className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-1"
+              className="text-xs text-zinc-400 hover:text-white font-semibold flex items-center space-x-1 cursor-pointer"
             >
-              <span>View All Tasks</span>
+              <span>All Tasks</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="space-y-3">
-            {tasks.slice(0, 4).map((t) => (
-              <div
-                key={t.id}
-                className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3 text-xs"
-              >
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold text-white">{t.title}</span>
-                    <span className="text-[10px] text-indigo-300 font-medium">({t.client_name || 'Internal'})</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-[10px] text-slate-400 mt-1">
-                    <span>Priority: <strong className="text-slate-200">{t.priority}</strong></span>
-                    <span>Deadline: <strong className="text-slate-200">{t.deadline ? t.deadline.split('T')[0] : 'N/A'}</strong></span>
-                    <span>Progress: <strong className="text-indigo-400">{t.progress_percentage}%</strong></span>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2 shrink-0">
-                  <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      t.status === 'APPROVED'
-                        ? 'bg-emerald-500/15 text-emerald-300'
-                        : t.status === 'SUBMITTED'
-                        ? 'bg-amber-500/15 text-amber-300'
-                        : t.status === 'REJECTED'
-                        ? 'bg-red-500/15 text-red-300'
-                        : 'bg-slate-800 text-slate-300'
-                    }`}
-                  >
-                    {t.status.replace('_', ' ')}
-                  </span>
-                  <button
-                    onClick={() => navigate('/my-tasks')}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition"
-                  >
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+          <div className="space-y-2.5">
+            {pendingTasks.length === 0 ? (
+              <div className="p-8 text-center text-xs text-zinc-500">
+                No pending tasks at this moment. You are all caught up!
               </div>
-            ))}
+            ) : (
+              pendingTasks.slice(0, 5).map((t) => (
+                <div
+                  key={t.id}
+                  onClick={() => navigate('/my-tasks')}
+                  className="p-3.5 bg-zinc-950/80 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-xl transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-bold text-white">{t.title}</span>
+                      <span
+                        className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase ${
+                          t.priority === 'Urgent'
+                            ? 'bg-red-500/20 text-[#ff4d4f] border border-red-500/30'
+                            : t.priority === 'High'
+                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                            : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
+                        }`}
+                      >
+                        {t.priority}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-zinc-400">
+                      {t.client_name || 'COCO Client'} • Due: {t.deadline || 'This week'}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 shrink-0">
+                    <div className="text-right">
+                      <div className="text-[11px] font-bold text-white">{t.progress_percentage || 0}%</div>
+                      <div className="text-[10px] text-zinc-500 uppercase">{t.status.replace('_', ' ')}</div>
+                    </div>
+                    <div className="w-16 bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-[#E50914] h-full rounded-full"
+                        style={{ width: `${t.progress_percentage || 0}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
-        {/* Daily Report Quick Submission Card */}
-        <div className="p-5 bg-[#111827] border border-slate-800 rounded-2xl shadow-xl flex flex-col justify-between">
+        {/* Right 1 Col: Daily Work Report Status */}
+        <div className="p-5 bg-[#0e0e11] border border-zinc-800 rounded-2xl shadow-xl flex flex-col justify-between">
           <div>
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-3">
-              <FileText className="w-5 h-5 text-cyan-400" />
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-sm font-bold text-white">Daily Work Log</h3>
+                <p className="text-[11px] text-zinc-400">Mandatory daily end-of-day summary</p>
+              </div>
+              <Calendar className="w-4 h-4 text-[#E50914]" />
             </div>
 
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-1">
-              Daily Work Log Requirement
-            </h3>
-            <p className="text-xs text-slate-400 leading-relaxed mb-4">
-              Team members are required to submit their daily work report before end of day. Approved daily logs award +2 points and maintain your streak!
-            </p>
-
             {todaysReport ? (
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-300 space-y-1">
-                <div className="font-bold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4" /> Today's Log Submitted!
+              <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-2">
+                <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Report Submitted for Today</span>
                 </div>
-                <div className="text-[11px] text-slate-400">
-                  Status: <strong>{todaysReport.status.replace('_', ' ')}</strong>
+                <p className="text-[11px] text-zinc-300 leading-relaxed">
+                  Status: <span className="font-semibold text-white">{todaysReport.status}</span>
+                </p>
+                <div className="text-[10px] text-zinc-400">
+                  Hours Logged: {todaysReport.hours_worked} hrs
                 </div>
               </div>
             ) : (
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 space-y-1">
-                <div className="font-bold">Pending Today's Submission</div>
-                <div className="text-[11px] text-slate-400">
-                  Record what you worked on, completed, and hours logged.
+              <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-3">
+                <div className="flex items-center space-x-2 text-[#ff4d4f] font-bold text-xs">
+                  <Clock className="w-4 h-4" />
+                  <span>Report Pending for Today</span>
                 </div>
+                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                  Please log what you worked on, what was completed, and technical implementations before end-of-day.
+                </p>
+                <button
+                  onClick={() => navigate('/submit-report')}
+                  className="w-full py-2 bg-[#E50914] hover:bg-[#ff1723] text-white text-xs font-bold rounded-lg transition cursor-pointer"
+                >
+                  Submit Daily Log Now
+                </button>
               </div>
             )}
           </div>
 
-          <button
-            onClick={() => navigate('/submit-report')}
-            className="w-full mt-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition"
-          >
-            {todaysReport ? 'View Submitted Log' : 'Submit Daily Work Report'}
-          </button>
+          <div className="mt-6 pt-4 border-t border-zinc-800/80">
+            <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-2">
+              Recent Submissions
+            </div>
+            <div className="space-y-2 text-xs">
+              {reports.slice(0, 3).map((r) => (
+                <div key={r.id} className="flex items-center justify-between py-1 text-zinc-300">
+                  <span className="text-[11px]">{r.report_date}</span>
+                  <span
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                      r.status === 'APPROVED'
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
+                    }`}
+                  >
+                    {r.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

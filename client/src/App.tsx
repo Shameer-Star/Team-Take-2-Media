@@ -8,7 +8,7 @@ import { Header } from './components/Header';
 import { TaskModal } from './components/TaskModal';
 import { LeadModal } from './components/LeadModal';
 
-// Pages
+// Work & Business Pages
 import { Login } from './pages/Login';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { TeamManagement } from './pages/admin/TeamManagement';
@@ -17,17 +17,12 @@ import { ReportsReview } from './pages/admin/ReportsReview';
 import { ClientCRM } from './pages/admin/ClientCRM';
 import { LeadPipeline } from './pages/admin/LeadPipeline';
 import { ProjectManagement } from './pages/admin/ProjectManagement';
-import { Leaderboard } from './pages/admin/Leaderboard';
-import { AchievementsPage } from './pages/admin/AchievementsPage';
 import { AnalyticsDashboard } from './pages/admin/AnalyticsDashboard';
-import { AIInsights } from './pages/admin/AIInsights';
 import { AuditLogPage } from './pages/admin/AuditLogPage';
-import { PointRulesSettings } from './pages/admin/PointRulesSettings';
 
 import { MemberDashboard } from './pages/member/MemberDashboard';
 import { MyTasks } from './pages/member/MyTasks';
 import { DailyReportSubmit } from './pages/member/DailyReportSubmit';
-import { MyPoints } from './pages/member/MyPoints';
 import { MyProfile } from './pages/member/MyProfile';
 
 const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -42,25 +37,21 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   }
 
   // Determine current page title
-  let pageTitle = 'Dashboard';
+  let pageTitle = 'Executive Dashboard';
   const path = location.pathname;
   if (path.includes('/tasks') || path.includes('/my-tasks')) pageTitle = 'Task Management';
   else if (path.includes('/reports') || path.includes('/submit-report')) pageTitle = 'Daily Work Reports';
   else if (path.includes('/clients')) pageTitle = 'Client CRM & Accounts';
   else if (path.includes('/leads')) pageTitle = 'Sales CRM Pipeline';
   else if (path.includes('/projects')) pageTitle = 'Project Management';
-  else if (path.includes('/team')) pageTitle = 'Team Management';
-  else if (path.includes('/leaderboard')) pageTitle = 'Team Leaderboard';
-  else if (path.includes('/achievements')) pageTitle = 'Badges & Achievements';
-  else if (path.includes('/analytics')) pageTitle = 'Analytics & Reports';
-  else if (path.includes('/ai-insights')) pageTitle = 'AI Insights & Predictions';
+  else if (path.includes('/team')) pageTitle = 'Team Directory';
+  else if (path.includes('/analytics')) pageTitle = 'Business Analytics';
   else if (path.includes('/audit-logs')) pageTitle = 'Audit Trail';
-  else if (path.includes('/point-rules')) pageTitle = 'Point Rules & Gamification';
-  else if (path.includes('/my-points')) pageTitle = 'Points & Badges';
   else if (path.includes('/profile')) pageTitle = 'Profile & Security';
+  else if (path.includes('/member')) pageTitle = 'My Work Dashboard';
 
   return (
-    <div className="min-h-screen bg-[#070A12] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#050505] text-zinc-100 flex flex-col font-sans">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="lg:pl-64 flex-1 flex flex-col">
@@ -121,27 +112,29 @@ export default function App() {
             {/* Root Dispatcher */}
             <Route path="/" element={<RootRedirect />} />
 
-            {/* Admin Routes */}
+            {/* Admin Work & Business Routes */}
             <Route path="/admin" element={<ProtectedLayout><AdminRoute element={<AdminDashboard />} /></ProtectedLayout>} />
-            <Route path="/team" element={<ProtectedLayout><AdminRoute element={<TeamManagement />} /></ProtectedLayout>} />
             <Route path="/tasks" element={<ProtectedLayout><AdminRoute element={<TaskManagement />} /></ProtectedLayout>} />
             <Route path="/reports" element={<ProtectedLayout><AdminRoute element={<ReportsReview />} /></ProtectedLayout>} />
-            <Route path="/achievements" element={<ProtectedLayout><AdminRoute element={<AchievementsPage />} /></ProtectedLayout>} />
+            <Route path="/team" element={<ProtectedLayout><AdminRoute element={<TeamManagement />} /></ProtectedLayout>} />
             <Route path="/analytics" element={<ProtectedLayout><AdminRoute element={<AnalyticsDashboard />} /></ProtectedLayout>} />
-            <Route path="/ai-insights" element={<ProtectedLayout><AdminRoute element={<AIInsights />} /></ProtectedLayout>} />
             <Route path="/audit-logs" element={<ProtectedLayout><AdminRoute element={<AuditLogPage />} /></ProtectedLayout>} />
-            <Route path="/point-rules" element={<ProtectedLayout><AdminRoute element={<PointRulesSettings />} /></ProtectedLayout>} />
 
-            {/* Member & Shared Routes */}
+            {/* Member & Shared Business Routes */}
             <Route path="/member" element={<ProtectedLayout><MemberDashboard /></ProtectedLayout>} />
             <Route path="/my-tasks" element={<ProtectedLayout><MyTasks /></ProtectedLayout>} />
             <Route path="/submit-report" element={<ProtectedLayout><DailyReportSubmit /></ProtectedLayout>} />
             <Route path="/clients" element={<ProtectedLayout><ClientCRM /></ProtectedLayout>} />
             <Route path="/leads" element={<ProtectedLayout><LeadPipeline /></ProtectedLayout>} />
             <Route path="/projects" element={<ProtectedLayout><ProjectManagement /></ProtectedLayout>} />
-            <Route path="/leaderboard" element={<ProtectedLayout><Leaderboard /></ProtectedLayout>} />
-            <Route path="/my-points" element={<ProtectedLayout><MyPoints /></ProtectedLayout>} />
             <Route path="/profile" element={<ProtectedLayout><MyProfile /></ProtectedLayout>} />
+
+            {/* Legacy Gamification Routes redirected to clean Business equivalents */}
+            <Route path="/leaderboard" element={<Navigate to="/team" replace />} />
+            <Route path="/achievements" element={<Navigate to="/tasks" replace />} />
+            <Route path="/point-rules" element={<Navigate to="/admin" replace />} />
+            <Route path="/my-points" element={<Navigate to="/my-tasks" replace />} />
+            <Route path="/ai-insights" element={<Navigate to="/analytics" replace />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

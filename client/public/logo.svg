@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <!-- Top-Left Ring -->
+  <circle cx="62" cy="56" r="34" stroke="#000000" stroke-width="18" stroke-linecap="round"/>
+  <!-- Bottom-Right Ring -->
+  <circle cx="102" cy="78" r="34" stroke="#000000" stroke-width="18" stroke-linecap="round"/>
+  <!-- Center Red Dots -->
+  <circle cx="62" cy="56" r="11" fill="#E50914"/>
+  <circle cx="102" cy="78" r="11" fill="#E50914"/>
+  <!-- MEDIA Text -->
+  <text x="80" y="142" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="24" letter-spacing="4" fill="#000000" text-anchor="middle">MEDIA</text>
+</svg>

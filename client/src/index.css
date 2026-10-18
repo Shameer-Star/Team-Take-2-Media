@@ -5,33 +5,35 @@
     border-color: rgba(255, 255, 255, 0.08);
   }
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #050505;
+    color: #f4f4f5;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
   code, pre {
     font-family: 'JetBrains Mono', monospace;
   }
 }
 
-/* Custom modern scrollbars */
+/* Custom Black, White & Red Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0B0F19;
+  background: #09090b;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1F293D;
+  background: #27272a;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: #E50914;
 }
 
-/* Glassmorphism helpers */
+/* Glassmorphism helpers for Black, White & Red theme */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(12px);
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -39,7 +41,18 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .glass-panel-hover:hover {
-  background: rgba(26, 35, 54, 0.85);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(24, 24, 27, 0.95);
+  border-color: rgba(229, 9, 20, 0.4);
   transform: translateY(-2px);
+}
+
+/* Signature Red glowing gradient badges */
+.red-glow {
+  box-shadow: 0 0 25px -5px rgba(229, 9, 20, 0.35);
+}
+
+.red-badge {
+  background-color: rgba(229, 9, 20, 0.12);
+  color: #ff4d4f;
+  border: 1px solid rgba(229, 9, 20, 0.25);
 }

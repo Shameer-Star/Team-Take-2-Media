@@ -1,13 +1,13 @@
 {
-  "name": "take-two-os",
+  "name": "coco-media-os",
   "version": "1.0.0",
-  "description": "TAKE TWO OS - Internal Business & Team Management Platform for Team Take Two Media",
+  "description": "COCO MEDIA OS - Business & Operations Platform for COCO MEDIA",
   "scripts": {
-    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"red,white\" \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "cd server && npm run dev",
     "dev:client": "cd client && npm run dev",
     "start": "cd server && npm start",
-    "build": "cd client && npm install && npm run build",
+    "build": "cd client && npm run build",
     "seed": "cd server && npx tsx src/database.ts"
   },
   "devDependencies": {

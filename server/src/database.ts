@@ -35,6 +35,25 @@ export async function initDatabase(): Promise<Database> {
   // Check if seed data is needed
   await seedInitialData();
 
+  // Ensure Alhameed is always an administrator and emails reflect COCO MEDIA
+  try {
+    const adminRole = queryOne("SELECT id FROM roles WHERE name = 'admin'");
+    if (adminRole) {
+      runQuery(
+        `UPDATE users 
+         SET role_id = ?, 
+             name = 'Alhameed', 
+             email = 'alhameed@cocomedia.com',
+             designation = 'Co-Founder & Technical Director / Admin' 
+         WHERE email LIKE '%hameed%' OR name LIKE '%Hameed%'`,
+        [adminRole.id]
+      );
+      runQuery("UPDATE users SET email = REPLACE(email, '@taketwomedia.com', '@cocomedia.com')");
+    }
+  } catch (err) {
+    // ignore migration error
+  }
+
   return db;
 }
 
@@ -376,16 +395,16 @@ async function seedInitialData() {
     JSON.stringify(['view_assigned_tasks', 'submit_report', 'view_leaderboard', 'view_points'])
   ]);
 
-  // 2. Initial Users
+  // 2. Initial Users (Alhameed is an Administrator alongside Naveed, Shameer, and Rayyan)
   const userSeeds = [
-    { name: 'Naveed', email: 'naveed@taketwomedia.com', pass: 'Naveed123.', roleId: adminRoleId, designation: 'Managing Director / Admin', phone: '+1 (555) 019-2831' },
-    { name: 'Shameer', email: 'shameer@taketwomedia.com', pass: 'Shameer123.', roleId: adminRoleId, designation: 'Operations Director / Admin', phone: '+1 (555) 019-2832' },
-    { name: 'Rayyan', email: 'rayyan@taketwomedia.com', pass: 'Rayyan123.', roleId: adminRoleId, designation: 'Creative Director / Admin', phone: '+1 (555) 019-2833' },
-    { name: 'Hameed', email: 'hameed@taketwomedia.com', pass: 'Hameed123.', roleId: memberRoleId, designation: 'Senior Full-Stack Developer', phone: '+1 (555) 019-2834' },
-    { name: 'Sathar', email: 'sathar@taketwomedia.com', pass: 'Sathar123.', roleId: memberRoleId, designation: 'Lead UI/UX Designer', phone: '+1 (555) 019-2835' },
-    { name: 'Asfar', email: 'asfar@taketwomedia.com', pass: 'Asfar123.', roleId: memberRoleId, designation: 'Motion & Video Producer', phone: '+1 (555) 019-2836' },
-    { name: 'Hilal', email: 'hilal@taketwomedia.com', pass: 'Hilal123.', roleId: memberRoleId, designation: 'Digital Marketing Strategist', phone: '+1 (555) 019-2837' },
-    { name: 'Sivabalan', email: 'sivabalan@taketwomedia.com', pass: 'Sivabalan123.', roleId: memberRoleId, designation: 'Brand & Content Specialist', phone: '+1 (555) 019-2838' },
+    { name: 'Alhameed', email: 'alhameed@cocomedia.com', pass: 'Hameed123.', roleId: adminRoleId, designation: 'Co-Founder & Technical Director / Admin', phone: '+1 (555) 019-2834' },
+    { name: 'Naveed', email: 'naveed@cocomedia.com', pass: 'Naveed123.', roleId: adminRoleId, designation: 'Managing Director / Admin', phone: '+1 (555) 019-2831' },
+    { name: 'Shameer', email: 'shameer@cocomedia.com', pass: 'Shameer123.', roleId: adminRoleId, designation: 'Operations Director / Admin', phone: '+1 (555) 019-2832' },
+    { name: 'Rayyan', email: 'rayyan@cocomedia.com', pass: 'Rayyan123.', roleId: adminRoleId, designation: 'Creative Director / Admin', phone: '+1 (555) 019-2833' },
+    { name: 'Sathar', email: 'sathar@cocomedia.com', pass: 'Sathar123.', roleId: memberRoleId, designation: 'Lead UI/UX Designer', phone: '+1 (555) 019-2835' },
+    { name: 'Asfar', email: 'asfar@cocomedia.com', pass: 'Asfar123.', roleId: memberRoleId, designation: 'Motion & Video Producer', phone: '+1 (555) 019-2836' },
+    { name: 'Hilal', email: 'hilal@cocomedia.com', pass: 'Hilal123.', roleId: memberRoleId, designation: 'Digital Marketing Strategist', phone: '+1 (555) 019-2837' },
+    { name: 'Sivabalan', email: 'sivabalan@cocomedia.com', pass: 'Sivabalan123.', roleId: memberRoleId, designation: 'Brand & Content Specialist', phone: '+1 (555) 019-2838' },
   ];
 
   const userMap: Record<string, string> = {};

@@ -54,8 +54,8 @@ app.use('/api/ai-insights', aiRoutes);
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'online',
-    app: 'TAKE TWO OS',
-    company: 'Team Take Two Media',
+    app: 'COCO MEDIA OS',
+    company: 'COCO MEDIA',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   });
@@ -73,14 +73,14 @@ async function startServer() {
     await initDatabase();
     app.listen(PORT, () => {
       console.log(`==================================================`);
-      console.log(`🚀 TAKE TWO OS Backend Server Running on port ${PORT}`);
-      console.log(`🏢 Team Take Two Media - Internal Business Platform`);
+      console.log(`🚀 COCO MEDIA OS Backend Server Running on port ${PORT}`);
+      console.log(`🏢 COCO MEDIA - Internal Business Platform`);
       console.log(`🔗 API Base: http://localhost:${PORT}/api`);
       console.log(`📁 Uploads:  http://localhost:${PORT}/uploads`);
       console.log(`==================================================`);
     });
   } catch (error) {
-    console.error('Failed to start TAKE TWO OS server:', error);
+    console.error('Failed to start COCO MEDIA OS server:', error);
     process.exit(1);
   }
 }

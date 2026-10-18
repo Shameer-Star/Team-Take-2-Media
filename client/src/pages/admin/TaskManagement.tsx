@@ -62,8 +62,8 @@ export const TaskManagement: React.FC = () => {
 
   const handleApproveTask = async (task: Task) => {
     try {
-      const res = await api.post(`/tasks/${task.id}/approve`);
-      setFeedback(`Task "${task.title}" approved! Awarded +${res.data.points_awarded} points.`);
+      await api.post(`/tasks/${task.id}/approve`);
+      setFeedback(`Task "${task.title}" deliverable approved successfully!`);
       loadTasks();
       setTimeout(() => setFeedback(''), 4000);
     } catch (err: any) {
@@ -123,11 +123,11 @@ export const TaskManagement: React.FC = () => {
       {/* Header & New Task Button */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-sm font-black uppercase tracking-wider text-slate-300">
-            Task Orchestration & Approvals
+          <h2 className="text-sm font-black uppercase tracking-wider text-zinc-200">
+            Task Orchestration & Deliverables
           </h2>
-          <p className="text-xs text-slate-400">
-            Lifecycle: TO DO → IN PROGRESS → SUBMITTED → APPROVED (Points Awarded).
+          <p className="text-xs text-zinc-400">
+            Lifecycle: TO DO → IN PROGRESS → SUBMITTED → APPROVED → COMPLETED.
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export const TaskManagement: React.FC = () => {
             setTaskToEdit(null);
             setShowTaskModal(true);
           }}
-          className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition"
+          className="flex items-center space-x-2 px-4 py-2 bg-[#E50914] hover:bg-[#ff1723] text-white text-xs font-bold rounded-xl shadow-lg shadow-[#E50914]/25 transition cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Create Task</span>
@@ -297,10 +297,10 @@ export const TaskManagement: React.FC = () => {
                   <>
                     <button
                       onClick={() => handleApproveTask(t)}
-                      className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center space-x-1"
+                      className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center space-x-1 cursor-pointer"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Approve (+Points)</span>
+                      <span>Approve Task</span>
                     </button>
                     <button
                       onClick={() => {

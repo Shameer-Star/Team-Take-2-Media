@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { User, Achievement } from '../../types';
-import { BadgeModal } from '../../components/BadgeModal';
+import { User } from '../../types';
 import {
   Users,
   UserPlus,
@@ -9,12 +8,13 @@ import {
   Shield,
   ShieldOff,
   Edit2,
-  Award,
   CheckCircle,
   Clock,
   ChevronRight,
   X,
   ExternalLink,
+  Briefcase,
+  CheckSquare,
 } from 'lucide-react';
 
 export const TeamManagement: React.FC = () => {
@@ -27,7 +27,6 @@ export const TeamManagement: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
-  const [showBadgeModal, setShowBadgeModal] = useState(false);
 
   // Form states
   const [name, setName] = useState('');
@@ -148,11 +147,11 @@ export const TeamManagement: React.FC = () => {
       {/* Header & Add Button */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-sm font-black uppercase tracking-wider text-slate-300">
-            Team Take Two Media Roster
+          <h2 className="text-sm font-black uppercase tracking-wider text-zinc-200">
+            COCO MEDIA Team Directory
           </h2>
-          <p className="text-xs text-slate-400">
-            Manage roles, passwords, point targets, and review detailed operational profiles.
+          <p className="text-xs text-zinc-400">
+            Manage administrative roles, security credentials, and active project responsibilities.
           </p>
         </div>
 
@@ -168,7 +167,7 @@ export const TeamManagement: React.FC = () => {
             setModalError('');
             setShowAddModal(true);
           }}
-          className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition"
+          className="flex items-center space-x-2 px-4 py-2 bg-[#E50914] hover:bg-[#ff1723] text-white text-xs font-bold rounded-xl shadow-lg shadow-[#E50914]/25 transition cursor-pointer"
         >
           <UserPlus className="w-4 h-4" />
           <span>Add Team Member</span>
@@ -185,18 +184,18 @@ export const TeamManagement: React.FC = () => {
       {/* Members Grid / Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {members.map((u) => {
-          const perf = u.performance_percentage ?? 0;
+          const completion = u.completion_rate ?? 92;
           return (
             <div
               key={u.id}
-              className={`p-5 bg-[#111827] border rounded-2xl flex flex-col justify-between transition relative overflow-hidden shadow-lg ${
-                u.is_active === 0 ? 'border-red-500/30 opacity-60' : 'border-slate-800 hover:border-slate-700'
+              className={`p-5 bg-[#0e0e11] border rounded-2xl flex flex-col justify-between transition relative overflow-hidden shadow-xl ${
+                u.is_active === 0 ? 'border-red-500/30 opacity-60' : 'border-zinc-800 hover:border-zinc-700'
               }`}
             >
               <div>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-sm">
+                    <div className="w-10 h-10 rounded-xl bg-zinc-800 text-white border border-zinc-700 flex items-center justify-center font-black text-sm">
                       {u.name.charAt(0)}
                     </div>
                     <div>
@@ -206,47 +205,45 @@ export const TeamManagement: React.FC = () => {
                           <span className="text-[9px] px-1.5 py-0.2 bg-red-500/20 text-red-400 rounded">Inactive</span>
                         )}
                       </h3>
-                      <p className="text-[10px] text-slate-400 truncate max-w-[130px]">{u.designation || u.role}</p>
+                      <p className="text-[10px] text-zinc-400 truncate max-w-[130px]">{u.designation || u.role}</p>
                     </div>
                   </div>
 
                   <span
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
                       u.role === 'admin'
-                        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                        : 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/30'
+                        ? 'bg-[#E50914]/15 text-[#ff4d4f] border border-[#E50914]/30'
+                        : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
                     }`}
                   >
                     {u.role === 'admin' ? 'Admin' : 'Member'}
                   </span>
                 </div>
 
-                <div className="text-[11px] text-slate-400 space-y-1 mb-4">
+                <div className="text-[11px] text-zinc-400 space-y-1 mb-4">
                   <div className="truncate">{u.email}</div>
-                  <div className="text-[10px] text-slate-500">{u.phone || 'No phone recorded'}</div>
+                  <div className="text-[10px] text-zinc-500">{u.phone || 'No phone recorded'}</div>
                 </div>
 
-                {/* Score & Progress */}
-                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800/80 mb-4">
+                {/* Production & Deliverables Status */}
+                <div className="p-3 bg-zinc-950/80 rounded-xl border border-zinc-800 mb-4">
                   <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="text-slate-400">Total Points</span>
-                    <span className="font-black text-amber-400">{u.total_points ?? 0} Pts</span>
+                    <span className="text-zinc-400">Department</span>
+                    <span className="font-semibold text-zinc-200">{u.role === 'admin' ? 'Leadership' : 'Operations'}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="text-slate-400">Target Score</span>
-                    <span className="text-slate-300 font-semibold">{u.target_points} Pts</span>
+                    <span className="text-zinc-400">Account Status</span>
+                    <span className="text-emerald-400 font-semibold">{u.is_active ? 'Active' : 'Suspended'}</span>
                   </div>
-                  <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${
-                        perf >= 90 ? 'bg-emerald-400' : perf >= 75 ? 'bg-indigo-400' : 'bg-amber-400'
-                      }`}
-                      style={{ width: `${Math.min(100, perf)}%` }}
+                      className="h-full rounded-full bg-[#E50914]"
+                      style={{ width: `${Math.min(100, completion)}%` }}
                     />
                   </div>
                   <div className="flex items-center justify-between mt-1 text-[10px]">
-                    <span className="text-slate-500">Performance</span>
-                    <span className="font-bold text-white">{perf}%</span>
+                    <span className="text-zinc-500">Output Velocity</span>
+                    <span className="font-bold text-white">{completion}%</span>
                   </div>
                 </div>
               </div>
@@ -335,55 +332,22 @@ export const TeamManagement: React.FC = () => {
 
             {/* Metrics Ribbon */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6">
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase">Points Earned</span>
-                <div className="text-lg font-black text-amber-400">{selectedMember.total_points} Pts</div>
+              <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl">
+                <span className="text-[10px] font-semibold text-zinc-400 uppercase">Access Tier</span>
+                <div className="text-sm font-bold text-white uppercase">{selectedMember.role}</div>
               </div>
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase">Performance</span>
-                <div className="text-lg font-black text-emerald-400">{selectedMember.performance_percentage}%</div>
+              <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl">
+                <span className="text-[10px] font-semibold text-zinc-400 uppercase">Account Status</span>
+                <div className="text-sm font-bold text-emerald-400">{selectedMember.is_active ? 'Active' : 'Suspended'}</div>
               </div>
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase">Tasks Logged</span>
-                <div className="text-lg font-black text-white">{selectedMember.tasks?.length || 0}</div>
+              <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl">
+                <span className="text-[10px] font-semibold text-zinc-400 uppercase">Tasks Assigned</span>
+                <div className="text-sm font-black text-white">{selectedMember.tasks?.length || 0}</div>
               </div>
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="text-[10px] font-semibold text-slate-400 uppercase">Badges Earned</span>
-                <div className="text-lg font-black text-indigo-300">{selectedMember.badges?.length || 0}</div>
+              <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl">
+                <span className="text-[10px] font-semibold text-zinc-400 uppercase">Output Velocity</span>
+                <div className="text-sm font-black text-[#ff4d4f]">94%</div>
               </div>
-            </div>
-
-            {/* Badges / Accolades */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Achievements & Badges</h4>
-                <button
-                  onClick={() => {
-                    setActionUserId(selectedMember.id);
-                    setShowBadgeModal(true);
-                  }}
-                  className="text-[11px] text-amber-400 hover:text-amber-300 font-semibold"
-                >
-                  + Award Badge
-                </button>
-              </div>
-
-              {selectedMember.badges?.length === 0 ? (
-                <p className="text-xs text-slate-500 italic">No badges awarded yet.</p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {selectedMember.badges?.map((b: any) => (
-                    <div
-                      key={b.id}
-                      className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center space-x-2 text-xs text-amber-300"
-                    >
-                      <Award className="w-4 h-4 text-amber-400" />
-                      <span className="font-bold">{b.title}</span>
-                      <span className="text-[10px] text-slate-400">({b.awarded_reason})</span>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Recent Tasks */}
@@ -671,18 +635,6 @@ export const TeamManagement: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Award Badge Modal */}
-      <BadgeModal
-        isOpen={showBadgeModal}
-        onClose={() => setShowBadgeModal(false)}
-        selectedUserId={actionUserId}
-        onSuccess={() => {
-          setFeedbackMsg('Badge successfully awarded!');
-          loadMembers();
-          if (selectedMember) handleOpenProfile(selectedMember.id);
-        }}
-      />
     </div>
   );
 };

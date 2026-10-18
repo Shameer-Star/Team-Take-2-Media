@@ -72,7 +72,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !company.trim()) {
-      setError('Contact person name and company are required');
+      setError('Contact name and company name are required');
       return;
     }
 
@@ -83,16 +83,16 @@ export const LeadModal: React.FC<LeadModalProps> = ({
       const payload = {
         name: name.trim(),
         company: company.trim(),
-        phone: phone.trim(),
-        email: email.trim(),
+        phone: phone.trim() || null,
+        email: email.trim() || null,
         source,
-        industry: industry.trim(),
-        interested_service: service.trim(),
+        industry: industry.trim() || null,
+        interested_service: service.trim() || null,
         budget: parseFloat(budget) || 0,
         assigned_to_id: assignedToId || null,
         stage,
-        follow_up_date: followUpDate || null,
-        notes: notes.trim(),
+        follow_up_date: followUpDate ? `${followUpDate} 12:00:00` : null,
+        notes: notes.trim() || null,
       };
 
       if (leadToEdit) {
@@ -111,23 +111,23 @@ export const LeadModal: React.FC<LeadModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#111827] border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl my-8">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <div className="flex items-center space-x-3 text-cyan-400">
-            <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-cyan-400" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#0e0e11] border border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-2xl my-8">
+        <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+          <div className="flex items-center space-x-3 text-[#E50914]">
+            <div className="w-9 h-9 rounded-xl bg-[#E50914]/15 border border-[#E50914]/30 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-[#ff4d4f]" />
             </div>
             <div>
               <h3 className="text-base font-bold text-white">
-                {leadToEdit ? 'Edit Lead' : 'Add New CRM Lead'}
+                {leadToEdit ? 'Edit CRM Lead' : 'Add New CRM Lead'}
               </h3>
-              <p className="text-xs text-slate-400">Pipeline Deal Qualification</p>
+              <p className="text-xs text-zinc-400">COCO MEDIA Sales Pipeline</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -135,187 +135,164 @@ export const LeadModal: React.FC<LeadModalProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl">
+            <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl">
               {error}
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Contact Person Name <span className="text-red-400">*</span>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                Contact Person Name <span className="text-[#E50914]">*</span>
               </label>
               <input
                 type="text"
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Zayn Malik"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
-                required
+                placeholder="e.g. Elena Rostova"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Company / Brand <span className="text-red-400">*</span>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                Company Name <span className="text-[#E50914]">*</span>
               </label>
               <input
                 type="text"
+                required
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                placeholder="e.g. Solaria Solar Energy"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
-                required
+                placeholder="e.g. Luminar Tech"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="zayn@company.com"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
+                placeholder="contact@company.com"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Phone / WhatsApp</label>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Phone / WhatsApp</label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+1 555-019-2831"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Lead Source</label>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Acquisition Source</label>
               <select
                 value={source}
                 onChange={(e) => setSource(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914]"
               >
                 <option value="Instagram">Instagram</option>
-                <option value="WhatsApp">WhatsApp</option>
                 <option value="Website">Website</option>
-                <option value="Referral">Referral</option>
                 <option value="LinkedIn">LinkedIn</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Referral">Referral</option>
                 <option value="Cold Outreach">Cold Outreach</option>
                 <option value="Other">Other</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Pipeline Stage</label>
-              <select
-                value={stage}
-                onChange={(e) => setStage(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500"
-              >
-                <option value="NEW_LEAD">New Lead</option>
-                <option value="CONTACTED">Contacted</option>
-                <option value="INTERESTED">Interested</option>
-                <option value="MEETING">Meeting</option>
-                <option value="PROPOSAL_SENT">Proposal Sent</option>
-                <option value="NEGOTIATION">Negotiation</option>
-                <option value="WON">Won</option>
-                <option value="LOST">Lost</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Estimated Budget ($)</label>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Estimated Budget ($)</label>
               <input
                 type="number"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500"
+                placeholder="15000"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914]"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Sales Stage</label>
+              <select
+                value={stage}
+                onChange={(e) => setStage(e.target.value as any)}
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914]"
+              >
+                <option value="NEW_LEAD">New Lead</option>
+                <option value="CONTACTED">Contacted</option>
+                <option value="INTERESTED">Interested</option>
+                <option value="MEETING">Meeting Scheduled</option>
+                <option value="PROPOSAL_SENT">Proposal Sent</option>
+                <option value="NEGOTIATION">Negotiation</option>
+                <option value="WON">Deal Won 🚀</option>
+                <option value="LOST">Lost</option>
+              </select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Industry</label>
-              <input
-                type="text"
-                value={industry}
-                onChange={(e) => setIndustry(e.target.value)}
-                placeholder="e.g. Renewable Tech, Hospitality, Retail"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Interested Service</label>
-              <input
-                type="text"
-                value={service}
-                onChange={(e) => setService(e.target.value)}
-                placeholder="e.g. Website Redesign + Paid Media"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Assign Lead To</label>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Account Lead</label>
               <select
                 value={assignedToId}
                 onChange={(e) => setAssignedToId(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914]"
               >
-                <option value="">Assign To...</option>
+                <option value="">-- Unassigned --</option>
                 {members.map((m) => (
                   <option key={m.id} value={m.id}>
-                    {m.name} ({m.designation || m.role})
+                    {m.name} ({m.role})
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Follow-up Date</label>
+              <label className="block text-xs font-semibold text-zinc-300 mb-1">Next Follow-Up</label>
               <input
                 type="date"
                 value={followUpDate}
                 onChange={(e) => setFollowUpDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Deal Notes</label>
+            <label className="block text-xs font-semibold text-zinc-300 mb-1">Deal Notes</label>
             <textarea
-              rows={2}
+              rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Important client context, key pain points, next steps..."
-              className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
+              placeholder="Important deal details, client goals, requirements..."
+              className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E50914]"
             />
           </div>
 
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-zinc-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition"
+              className="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-xl transition cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl shadow-lg shadow-cyan-600/30 transition disabled:opacity-50"
+              className="px-6 py-2 text-xs font-bold text-white bg-[#E50914] hover:bg-[#ff1723] rounded-xl shadow-lg shadow-[#E50914]/25 transition disabled:opacity-50 cursor-pointer"
             >
               {loading ? 'Saving...' : leadToEdit ? 'Update Deal' : 'Add Lead'}
             </button>

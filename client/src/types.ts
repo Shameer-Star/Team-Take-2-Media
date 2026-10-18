@@ -12,6 +12,7 @@ export interface User {
   total_points?: number;
   performance_percentage?: number;
   performance_level?: string;
+  completion_rate?: number;
   completed_tasks?: number;
   pending_tasks?: number;
   on_time_rate?: number;

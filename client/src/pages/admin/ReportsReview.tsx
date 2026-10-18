@@ -46,7 +46,7 @@ export const ReportsReview: React.FC = () => {
   const handleApprove = async (report: WorkReport) => {
     try {
       await api.post(`/reports/${report.id}/approve`);
-      setFeedback(`Daily report for ${report.user_name} approved! Awarded +2 points.`);
+      setFeedback(`Daily work report for ${report.user_name} approved successfully!`);
       loadReports();
       setTimeout(() => setFeedback(''), 4000);
     } catch (err: any) {
@@ -63,14 +63,14 @@ export const ReportsReview: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 font-sans">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-sm font-black uppercase tracking-wider text-slate-300">
+          <h2 className="text-sm font-black uppercase tracking-wider text-zinc-200">
             Daily Work Reports Verification
           </h2>
-          <p className="text-xs text-slate-400">
-            Every submission requires admin review. Approved logs award +2 points to the member.
+          <p className="text-xs text-zinc-400">
+            Quality review: Verify deliverables, work items, hours logged, and technical implementations.
           </p>
         </div>
 
@@ -220,10 +220,10 @@ export const ReportsReview: React.FC = () => {
                 <div className="pt-3 border-t border-slate-800 flex items-center justify-end space-x-3">
                   <button
                     onClick={() => handleApprove(r)}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center space-x-1.5"
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center space-x-1.5 cursor-pointer"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Approve (+2 Points)</span>
+                    <span>Approve Report</span>
                   </button>
                   <button
                     onClick={() => {
